@@ -28,7 +28,7 @@ def main(spark, file_path):
         
         print('------------------------')
         df = spark.read.parquet(f)
-        print(df.columns)
+        print(df['__index_level_0__'].head())
 
 
 if __name__ == "__main__":
