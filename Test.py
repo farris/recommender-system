@@ -27,7 +27,7 @@ def main(spark, file_path):
     
         
     print('------------------------')
-    df = spark.read.parquet(file_path[0])
+    df = spark.read.parquet(file_path)
     df.createOrReplaceTempView('cf_train')
     query10 = spark.sql(""" SELECT * from cf_train
                             LIMIT 10
@@ -42,4 +42,4 @@ if __name__ == "__main__":
 
 
     
-    main(spark, sys.argv[1:])
+    main(spark, sys.argv[1])
