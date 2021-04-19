@@ -25,20 +25,18 @@ def main(spark, file_path):
     
     
     
-    i = 0
+   
     print('------------------------')
-    for f in file_path:
-        if i == 1:
-            break
-        df = spark.read.parquet(str(f))
-        df.createOrReplaceTempView('cf_train')
-        query10 = spark.sql(""" SELECT * from cf_train
-                                LIMIT 10
-                                    """)
-        query10.show()
+   
+    df = spark.read.parquet(str(file_path[0]))
+    df.createOrReplaceTempView('cf_train')
+    query10 = spark.sql(""" SELECT * FROM cf_train
+                            LIMIT 10
+                                """)
+    query10.show()
     
   
-        i+=1
+      
 
 if __name__ == "__main__":
 
