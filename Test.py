@@ -50,6 +50,7 @@ def main(spark, file_path):
     #print(df20.columns)
     print('--------------')
     df200 = df20.sort(col("user_id"))
+    df200.show()
     #df200 = df20.repartition(10000000)
     #df200.write.parquet('hdfs:/user/fda239/train1.parquet')
     
