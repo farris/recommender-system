@@ -7,7 +7,7 @@ Created on Sun Apr 18 21:45:20 2021
 """
 
 
-#spark-submit Test.py 
+#spark-submit Test.py hdfs:/user/bm106/pub/MSD/cf_train.parquet hdfs:/user/bm106/pub/MSD/cf_validation.parquet hdfs:/user/bm106/pub/MSD/cf_test.parquet
 
 
 
