@@ -31,11 +31,9 @@ def main(spark, file_path):
     df = spark.read.parquet(str(file_path[0]))
     
     df.createOrReplaceTempView('df')
-    df.take(2)
-    df.show()
     
-  
-      
+    df.take(2).show()
+    
 
 if __name__ == "__main__":
 
