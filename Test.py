@@ -36,9 +36,9 @@ def main(spark, file_path):
     
     print('------------------------')
     for f in file_path:
-        print(f)
-        #df  = spark.read.parquet(file_path)
-        #df.columns
+       
+        df  = spark.read.parquet('file_path')
+        df.columns
     
 
 if __name__ == "__main__":
