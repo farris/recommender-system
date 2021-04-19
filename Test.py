@@ -28,8 +28,11 @@ def main(spark, file_path):
         
     print('------------------------')
     df = spark.read.parquet(file_path[0])
-    #df.createOrReplaceTempView('df1')
-    df.show()
+    df.createOrReplaceTempView('cf_train')
+    query10 = spark.sql(""" SELECT * from cf_train
+                            LIMIT 10
+                                """)
+    query10.show()
 
 
 if __name__ == "__main__":
