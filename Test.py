@@ -28,6 +28,7 @@ def main(spark, file_path):
         
         print('------------------------')
         df = spark.read.parquet(f)
+        df.createOrReplaceTempView(f)
         df.show(n=5)
 
 
