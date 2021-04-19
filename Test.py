@@ -24,20 +24,23 @@ from pyspark.sql import SparkSession
 def main(spark, file_path):
     
     
-    
+    files = ['train','validation','test']
    
-    print('------------------------')
-   
-    df = spark.read.parquet(str(file_path[0]))
+    for f,z in zip(file_path,files):
+        
+        df = spark.read.parquet(str(f))
+        
+        
+        
+        df1 = df.repartition(1000)
+        
+        path = 'hdfs:/user/fda239/'+z+'.parquet'
+        
+        df1.write.parquet('path')
+ 
     
-    
-#####################
-    # df1 = df.repartition(1000)
-    # df1.write.mode("overwrite").parquet(str(file_path[1]))
- #####################################   
-    
-    df.createOrReplaceTempView('df')
-    df.show(2)
+    #df.createOrReplaceTempView('df')
+    #df.show(2)
     
 
 if __name__ == "__main__":
