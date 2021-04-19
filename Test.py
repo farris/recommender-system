@@ -28,7 +28,7 @@ def main(spark, file_path):
    
     print('------------------------')
    
-    df = spark.read.parquet(str(file_path[2]))
+    df = spark.read.parquet(str(file_path[1]))
     
     df.createOrReplaceTempView('df')
     
