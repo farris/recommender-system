@@ -29,11 +29,12 @@ def main(spark, file_path):
     print('------------------------')
    
     df = spark.read.parquet(str(file_path[0]))
-    df.createOrReplaceTempView('cf_train')
-    query10 = spark.sql(""" SELECT * FROM cf_train
-                            LIMIT 10
-                                """)
-    query10.show()
+    print(df.columns)
+    # df.createOrReplaceTempView('cf_train')
+    # query10 = spark.sql(""" SELECT * FROM cf_train
+    #                         LIMIT 10
+    #                             """)
+    # query10.show()
     
   
       
