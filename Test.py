@@ -23,10 +23,12 @@ from pyspark.sql import SparkSession
 
 def main(spark, file_path):
     
-    print('------------------------')
-    print(file_path)
-    print('------------------------')
-
+    
+    for f in file_path:
+        
+        print('------------------------')
+        df = spark.read.parquet(f)
+        df.print_Schema()    
 
 
 if __name__ == "__main__":
