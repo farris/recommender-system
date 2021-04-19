@@ -28,10 +28,15 @@ def main(spark, file_path):
    
     print('------------------------')
    
-    df = spark.read.parquet(str(file_path[1]))
+    df = spark.read.parquet(str(file_path[0]))
+    
+    
+#####################
+    # df1 = df.repartition(1000)
+    # df1.write.mode("overwrite").parquet(str(file_path[1]))
+ #####################################   
     
     df.createOrReplaceTempView('df')
-    
     df.show(2)
     
 
