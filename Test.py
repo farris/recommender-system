@@ -26,20 +26,24 @@ def main(spark, file_path):
     
     
         
+    # print('------------------------')
+    # df = spark.read.parquet(file_path)
+    # df.createOrReplaceTempView('cf_train')
+    # query10 = spark.sql(""" SELECT * from cf_train
+    #                         LIMIT 10
+    #                             """)
+    # query10.show()
+    
     print('------------------------')
-    df = spark.read.parquet(file_path)
-    df.createOrReplaceTempView('cf_train')
-    query10 = spark.sql(""" SELECT * from cf_train
-                            LIMIT 10
-                                """)
-    query10.show()
-
+    for f in file_path:
+        
+        df  = spark.read.parquet(file_path)
+        df.columns
+    
 
 if __name__ == "__main__":
 
     # Create the spark session object
     spark = SparkSession.builder.appName('part1').getOrCreate()
 
-
-    
-    main(spark, sys.argv[1])
+    main(spark, sys.argv[1:])
