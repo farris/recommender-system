@@ -27,29 +27,6 @@ def main(spark, file_path):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
 
     # Create the spark session object
@@ -57,4 +34,4 @@ if __name__ == "__main__":
 
 
     
-    main(spark, sys.argv[1:])
+    main(spark, sys.argv[1])
