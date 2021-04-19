@@ -40,6 +40,16 @@ def main(spark, file_path):
     df1 = df.repartition(1000)
     df1.write.mode("overwrite").parquet('hdfs:/user/fda239/test.parquet')
     
+    df10 = spark.read.parquet(str(file_path[1]))
+    df100 = df10.repartition(1000)
+    df100.write.mode("overwrite").parquet('hdfs:/user/fda239/validation.parquet')
+    
+    # df20 = spark.read.parquet(str(file_path[0]))
+    # df200 = df20.repartition(1000)
+    # df200.write.mode("overwrite").parquet('hdfs:/user/fda239/test.parquet')
+    
+    
+    
     #df.createOrReplaceTempView('df')
     #df.show(2)
     
