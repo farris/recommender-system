@@ -50,9 +50,9 @@ def main(spark, file_path):
     #print(df20.columns)
     print('--------------')
     df200 = df20.sort(col("user_id"))
-    
-    df2000 = df200.repartition(1000)
-    df2000.write.mode("overwrite").parquet('hdfs:/user/fda239/train1.parquet')
+    df200.take(2)
+    #df2000 = df200.repartition(1000)
+    #df2000.write.mode("overwrite").parquet('hdfs:/user/fda239/train1.parquet')
     
     
     
