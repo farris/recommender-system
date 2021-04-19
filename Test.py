@@ -49,7 +49,7 @@ def main(spark, file_path):
     df20 = spark.read.parquet(str(file_path[0]))
     #print(df20.columns)
     print('--------------')
-    print(df20.count())
+    df20.describe().show()
     #df200 = df20.repartition(1000000000)
     #df200.write.mode("overwrite").parquet('hdfs:/user/fda239/train.parquet')
     
