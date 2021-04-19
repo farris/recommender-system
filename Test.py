@@ -28,8 +28,8 @@ def main(spark, file_path):
         
         print('------------------------')
         df = spark.read.parquet(f)
-        df.createOrReplaceTempView(f)
-        df.show(n=5)
+        df.createOrReplaceTempView('df1')
+        df1.show(n=5)
 
 
 if __name__ == "__main__":
