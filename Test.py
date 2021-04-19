@@ -10,13 +10,14 @@ Created on Sun Apr 18 21:45:20 2021
 #spark-submit Test.py hdfs:/user/bm106/pub/MSD/cf_train.parquet hdfs:/user/bm106/pub/MSD/cf_validation.parquet hdfs:/user/bm106/pub/MSD/cf_test.parquet
 
 
-
+import sys
 
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 from pyspark.sql import functions as F
 
+from pyspark.sql import SparkSession
 
 
 
