@@ -28,7 +28,7 @@ def main(spark, file_path):
         
         print('------------------------')
         df = spark.read.parquet(f)
-        df.print_Schema()    
+        print(df.columns)
 
 
 if __name__ == "__main__":
