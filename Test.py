@@ -23,8 +23,9 @@ from pyspark.sql import SparkSession
 
 def main(spark, file_path):
     
-
+    print('------------------------')
     print(file_path)
+    print('------------------------')
 
 
 
@@ -35,4 +36,4 @@ if __name__ == "__main__":
 
 
     
-    main(spark, sys.argv[1])
+    main(spark, sys.argv[1:])
