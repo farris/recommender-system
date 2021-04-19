@@ -30,13 +30,11 @@ def main(spark, file_path):
         
         df = spark.read.parquet(str(f))
         
-        
-        
         df1 = df.repartition(1000)
         
         path = 'hdfs:/user/fda239/'+z+'.parquet'
         
-        df1.write.parquet('path')
+        df1.write.mode("overwrite").parquet(path)
  
     
     #df.createOrReplaceTempView('df')
