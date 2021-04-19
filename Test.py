@@ -24,12 +24,12 @@ from pyspark.sql import SparkSession
 def main(spark, file_path):
     
     
-    for f in file_path:
+    
         
-        print('------------------------')
-        df = spark.read.parquet(f)
-        df.createOrReplaceTempView('df1')
-        df1.show(n=5)
+    print('------------------------')
+    df = spark.read.parquet(file_path[0])
+    df.createOrReplaceTempView('df1')
+    df1.show(n=5)
 
 
 if __name__ == "__main__":
