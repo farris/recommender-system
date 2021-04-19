@@ -32,7 +32,7 @@ def main(spark, file_path):
     
     df.createOrReplaceTempView('df')
     
-    print(df.show())
+    df.show()
     
 
 if __name__ == "__main__":
