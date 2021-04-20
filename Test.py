@@ -54,6 +54,7 @@ def main(spark, file_path):
     
     query1 = spark.sql("""SELECT  * FROM data
                         WHERE count == 1
+                        GROUP BY user_id
                             """)
                             
     query1.show()
