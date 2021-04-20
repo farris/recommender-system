@@ -55,7 +55,8 @@ def main(spark, file_path):
     query1 = spark.sql("""SELECT  * FROM data
                         WHERE count == 1
                             """)
-    #query1.show()
+                            
+    query1.show()
     
     
     
