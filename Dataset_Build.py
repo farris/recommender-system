@@ -40,4 +40,10 @@ df_train.loc[df_train['count'].isin(take_out), 'count'] = '' ## new matrix with 
 
 df_test.to_csv('testing_set.csv')
 
+actual.to_csv('loss_eval.csv')
 
+df_train.to_csv('train.csv')
+
+# %%
+
+TRAIN = pd.read_csv('train.csv')
