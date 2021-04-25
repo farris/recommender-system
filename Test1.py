@@ -29,7 +29,7 @@ def main(spark, sc,file_path):
     indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
     
     print("2---------")
-    indexed0 = indexed.sort(col("track_id"))
+    indexed0 = indexed.sort(col("user_ID_"))
     indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
     
     print("3---------")
