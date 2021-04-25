@@ -12,8 +12,10 @@ def main(spark, sc,file_path):
     
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    initial1 = spark.read.parquet(str(file_path[0]))
+    initial1 = spark.read.parquet(str(file_path[1]))
     schemaRatings = initial1.sample(0.001, 123)
+    
+    print(len(schemaRatings))
 
 ###########################################
     # schemaString = "user_str track_id count"
