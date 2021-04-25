@@ -12,16 +12,16 @@ def main(spark, sc,file_path):
     
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    ratings = spark.read.parquet(str(file_path[1]))
-    
+    schemaRatings = spark.read.parquet(str(file_path[1]))
+
 ###########################################
-    schemaString = "user_str track_id count"
+    # schemaString = "user_str track_id count"
 
-    fields = [StructField(field_name, StringType(), True) for field_name in schemaString.split()]
-    schema = StructType(fields)
+    # fields = [StructField(field_name, StringType(), True) for field_name in schemaString.split()]
+    # schema = StructType(fields)
 
-    # Apply the schema to the RDD.
-    schemaRatings = spark.createDataFrame(ratings, schema)
+    # # Apply the schema to the RDD.
+    # schemaRatings = spark.createDataFrame(ratings, schema)
     
     schemaRatings.createOrReplaceTempView("ratings")
 ####################################################
