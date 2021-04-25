@@ -11,7 +11,7 @@ import sys
 
 def main(spark, sc,file_path):
 
-#read data & sort##################################################   
+    
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[0]))
@@ -22,21 +22,25 @@ def main(spark, sc,file_path):
     print("Sample Size-----------------------------------------------------------------------------------")
     #schemaRatings = initial1.sample(0.001, 123)
 
-    #add integer index columns##################################################
+    ###################################################
     schemaRatings.createOrReplaceTempView("ratings")
     print('1---------')
     indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
     indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
     
     print("2---------")
+    indexed0 = indexed.sort(col("track_id"))
     indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
+    
     print("3---------")
-    indexed = indexer_track.fit(indexed).transform(indexed) 
+    
+
+    indexed = indexer_track.fit(indexed0).transform(indexed0) 
     
     print("Indexed-----------------------------------------------------------------------------------")
     #print(indexed.show())
     
-    #Queries##################################################
+    ###################################################
     indexed.createOrReplaceTempView("ratings_idx")
     # SQL can be run over DataFrames that have been registered as a table.
     results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
