@@ -46,7 +46,7 @@ def main(spark, file_path):
     
     
     
-    df20 = spark.read.parquet(str(file_path[1]))
+    df20 = spark.read.parquet(str(file_path[0]))
     #print(df20.columns)
     print('--------------')
     df200 = df20.sort(col("user_id"))
@@ -56,7 +56,7 @@ def main(spark, file_path):
                         WHERE count == 1
                             """)
                             
-    query1.show()
+    #query1.show()
     
     
     
