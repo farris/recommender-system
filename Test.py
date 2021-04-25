@@ -44,7 +44,7 @@ def main(spark, file_path):
     # df100 = df10.repartition(1000)
     # df100.write.mode("overwrite").parquet('hdfs:/user/fda239/validation.parquet')
     
-    df10 = spark.read.parquet(str(file_path[0]))
+    df10 = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train.parquet')
     df100 = df10.repartition(1000)
     df100.write.mode("overwrite").parquet('hdfs:/user/fda239/train.parquet')
     
