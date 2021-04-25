@@ -25,7 +25,7 @@ def main(spark, sc,file_path):
     
     schemaRatings.createOrReplaceTempView("ratings")
 ###################################################
-    indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID")
+    indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
     indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
     
     indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
@@ -35,11 +35,11 @@ def main(spark, sc,file_path):
     indexed.show()
     
     
-    # indexed.createOrReplaceTempView("ratings_idx")
-    # # SQL can be run over DataFrames that have been registered as a table.
-    # results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
-    # print("Results-----------------------------------------------------------------------------------")
-    # results.show()  
+    indexed.createOrReplaceTempView("ratings_idx")
+    # SQL can be run over DataFrames that have been registered as a table.
+    results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
+    print("Results-----------------------------------------------------------------------------------")
+    results.show()  
 
     # results.createOrReplaceTempView("final")
     # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
