@@ -15,13 +15,13 @@ def main(spark, sc,file_path):
     initial1 = spark.read.parquet(str(file_path[0]))
 
     print("Original Size-----------------------------------------------------------------------------------")
-    print(initial1.count())
+    #print(initial1.count())
     
     print("Sample Size-----------------------------------------------------------------------------------")
     #schemaRatings = initial1.sample(0.001, 123)
-    schemaRatings = initial1.limit(1000)
+
     
-    print(schemaRatings.count())
+    
 
 ###########################################
     # schemaString = "user_str track_id count"
@@ -57,7 +57,7 @@ def main(spark, sc,file_path):
     
     train_rdd = cleaned.rdd.map(tuple)
     print("Train_RDD-----------------------------------------------------------------------------------")
-    print(train_rdd.take(10))
+    #print(train_rdd.take(10))
     
     # from pyspark.mllib.recommendation import ALS
     # model=ALS.trainImplicit(train_rdd, rank=5, iterations=3, alpha=0.99)
