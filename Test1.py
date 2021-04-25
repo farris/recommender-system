@@ -5,6 +5,7 @@
 from pyspark.sql import SparkSession
 from pyspark import SparkContext,  SparkConf
 from pyspark.sql.types import *
+from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
 import sys 
 
@@ -12,8 +13,8 @@ def main(spark, sc,file_path):
     
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    schemaRatings = spark.read.parquet(str(file_path[0]))
-
+    schemaRatings0 = spark.read.parquet(str(file_path[0]))
+    schemaRatings = schemaRatings0.sort(col("user_id"))
     print("Original Size-----------------------------------------------------------------------------------")
     #print(initial1.count())
     
