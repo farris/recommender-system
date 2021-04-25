@@ -12,7 +12,7 @@ def main(spark, sc,file_path):
     
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    schemaRatings = spark.read.parquet(str(file_path[1]))
+    schemaRatings = spark.read.parquet(str(file_path[0]))
 
 ###########################################
     # schemaString = "user_str track_id count"
@@ -32,19 +32,19 @@ def main(spark, sc,file_path):
     indexed = indexer_track.fit(indexed).transform(indexed) 
     
     print("Indexed-----------------------------------------------------------------------------------")
-    indexed.show()
+    print(indexed.show())
     
     
     indexed.createOrReplaceTempView("ratings_idx")
     # SQL can be run over DataFrames that have been registered as a table.
     results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
     print("Results-----------------------------------------------------------------------------------")
-    results.show()  
+    print(results.show()  )
 
     results.createOrReplaceTempView("final")
     cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
     print("Cleaned-----------------------------------------------------------------------------------")
-    cleaned.show() 
+    print(cleaned.show() )
     
     train_rdd = cleaned.rdd.map(tuple)
     print("Train_RDD-----------------------------------------------------------------------------------")
