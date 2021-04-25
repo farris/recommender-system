@@ -35,9 +35,11 @@ def main(spark, sc,file_path):
     
     schemaRatings.createOrReplaceTempView("ratings")
 ###################################################
+    print("1---------)
     indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
     indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
     
+    print("2---------)
     indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
     indexed = indexer_track.fit(indexed).transform(indexed) 
     
