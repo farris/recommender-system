@@ -44,11 +44,31 @@ def main(spark, file_path):
     # df100 = df10.repartition(1000)
     # df100.write.mode("overwrite").parquet('hdfs:/user/fda239/validation.parquet')
     
-    df10 = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train.parquet')
-    df100 = df10.repartition(1000)
-    df100.write.mode("overwrite").parquet('hdfs:/user/fda239/train.parquet')
     
-  
+    
+    df20 = spark.read.parquet(str(file_path[1]))
+    #print(df20.columns)
+    print('--------------')
+    df200 = df20.sort(col("user_id"))
+    df200.createOrReplaceTempView('data')
+    
+    query1 = spark.sql("""SELECT  * FROM data
+                        WHERE count == 1
+                            """)
+                            
+    query1.show()
+    
+    
+    
+    
+    #df2000 = df200.repartition(1000)
+    #df2000.write.mode("overwrite").parquet('hdfs:/user/fda239/train1.parquet')
+    
+    
+    
+    #df.createOrReplaceTempView('df')
+    #df.show(2)
+    
 
 if __name__ == "__main__":
 
