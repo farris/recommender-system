@@ -12,13 +12,15 @@ def main(spark, sc,file_path):
     
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    initial1 = spark.read.parquet(str(file_path[1]))
-    
+    initial1 = spark.read.parquet(str(file_path[0]))
+
     print("Original Size-----------------------------------------------------------------------------------")
     print(initial1.count())
     
     print("Sample Size-----------------------------------------------------------------------------------")
-    schemaRatings = initial1.sample(0.001, 123)
+    #schemaRatings = initial1.sample(0.001, 123)
+    schemaRatings = initial1.limit(1000)
+    
     print(schemaRatings.count())
 
 ###########################################
