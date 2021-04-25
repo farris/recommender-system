@@ -10,7 +10,8 @@ from pyspark.ml.feature import StringIndexer
 import sys 
 
 def main(spark, sc,file_path):
-    
+
+#read data & sort##################################################   
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[0]))
@@ -21,32 +22,21 @@ def main(spark, sc,file_path):
     print("Sample Size-----------------------------------------------------------------------------------")
     #schemaRatings = initial1.sample(0.001, 123)
 
-    
-    
-
-###########################################
-    # schemaString = "user_str track_id count"
-
-    # fields = [StructField(field_name, StringType(), True) for field_name in schemaString.split()]
-    # schema = StructType(fields)
-
-    # # Apply the schema to the RDD.
-    # schemaRatings = spark.createDataFrame(ratings, schema)
-    
+    #add integer index columns##################################################
     schemaRatings.createOrReplaceTempView("ratings")
-###################################################
     print('1---------')
     indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
     indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
     
     print("2---------")
     indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
+    print("3---------")
     indexed = indexer_track.fit(indexed).transform(indexed) 
     
     print("Indexed-----------------------------------------------------------------------------------")
     #print(indexed.show())
     
-    
+    #Queries##################################################
     indexed.createOrReplaceTempView("ratings_idx")
     # SQL can be run over DataFrames that have been registered as a table.
     results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
