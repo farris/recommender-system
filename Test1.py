@@ -32,19 +32,19 @@ def main(spark, sc,file_path):
     indexed = indexer_track.fit(indexed).transform(indexed) 
     
     print("Indexed-----------------------------------------------------------------------------------")
-    print(indexed.show())
+    #print(indexed.show())
     
     
     indexed.createOrReplaceTempView("ratings_idx")
     # SQL can be run over DataFrames that have been registered as a table.
     results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
     print("Results-----------------------------------------------------------------------------------")
-    print(results.show()  )
+    #print(results.show()  )
 
     results.createOrReplaceTempView("final")
     cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
     print("Cleaned-----------------------------------------------------------------------------------")
-    print(cleaned.show() )
+    #print(cleaned.show() )
     
     train_rdd = cleaned.rdd.map(tuple)
     print("Train_RDD-----------------------------------------------------------------------------------")
