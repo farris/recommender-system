@@ -16,10 +16,10 @@ from pyspark.ml import Pipeline
 #%%
 def main(spark, sc,file_path):
 
-    
+    f = 1
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    schemaRatings0 = spark.read.parquet(str(file_path[0]))
+    schemaRatings0 = spark.read.parquet(str(file_path[f]))
     schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
 
     ###################################################
@@ -41,10 +41,17 @@ def main(spark, sc,file_path):
     # ###################################################
     indexed.createOrReplaceTempView("ratings_idx")
 
-    results = spark.sql("SELECT user_id, track_id, count, CAST(user_id_index AS INT) AS userId , CAST(track_id_index AS INT) AS trackId FROM ratings_idx")
+    results = spark.sql("""
+                            SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
+                                CAST(track_id_index AS INT) AS trackId FROM ratings_idx
+                            
+                            
+                            
+                            
+                            """)
     
     # print("Results-----------------------------------------------------------------------------------")
-    # print(results.show()  )
+    print(results.show()  )
     
     # results.createOrReplaceTempView("final")
     # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
