@@ -63,8 +63,8 @@ def main(spark, sc,file_path):
     # print("Results-----------------------------------------------------------------------------------")
     # print(results.show()  )
 
-    #results.createOrReplaceTempView("final")
-    #cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    results.createOrReplaceTempView("final")
+    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
 
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
