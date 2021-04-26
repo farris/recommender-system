@@ -43,7 +43,8 @@ def main(spark, sc,file_path):
 
     # print("4---------")
     # indexed = indexer_track.fit(indexed).transform(indexed) 
-    indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) for column in list(set(schemaRatings.columns)-set(['count'])) ]
+    indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) \
+        for column in list(set(schemaRatings.columns)-set(['count'])-set(['count'])-set(['__index_level_0__'])) ]
 
 
     pipeline = Pipeline(stages=indexers)
