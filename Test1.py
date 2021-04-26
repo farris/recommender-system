@@ -9,12 +9,17 @@ from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
 import sys 
 
+
+
+from pyspark.ml import Pipeline
+
+
 def main(spark, sc,file_path):
 
     
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    schemaRatings0 = spark.read.parquet(str(file_path[0]))
+    schemaRatings0 = spark.read.parquet(str(file_path[1]))
     schemaRatings = schemaRatings0.sort(col("user_id"))
     print("Original Size-----------------------------------------------------------------------------------")
     #print(initial1.count())
@@ -25,43 +30,51 @@ def main(spark, sc,file_path):
     ###################################################
     schemaRatings.createOrReplaceTempView("ratings")
     print('1---------')
-    indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
-    indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
+    # indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
+    # indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
     
-    print("2---------")
+    # print("2---------")
     
-    indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
+    # indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
     
-    print("3---------")
+    # print("3---------")
     
-    indexed10 = indexed.sort(col("track_id"))
-    
-    print("4---------")
-    indexed = indexer_track.fit(indexed10).transform(indexed10) 
-    
-    print("Indexed-----------------------------------------------------------------------------------")
-    #print(indexed.show())
-    
-    ###################################################
-    indexed.createOrReplaceTempView("ratings_idx")
-    # SQL can be run over DataFrames that have been registered as a table.
-    results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
-    print("Results-----------------------------------------------------------------------------------")
-    #print(results.show()  )
+    # indexed = indexed.sort(col("track_id"))
 
-    results.createOrReplaceTempView("final")
-    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-    print("Cleaned-----------------------------------------------------------------------------------")
-    #print(cleaned.show() )
+    # print("4---------")
+    # indexed = indexer_track.fit(indexed).transform(indexed) 
+    indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) for column in list(set(schemaRatings.columns)-set(['count'])) ]
+
+
+    pipeline = Pipeline(stages=indexers)
+    indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
+    indexed.show()
+
+
+#%%
+    # print("Indexed-----------------------------------------------------------------------------------")
+    # print(indexed.show())
     
-    train_rdd = cleaned.rdd.map(tuple)
-    print("Train_RDD-----------------------------------------------------------------------------------")
-    #print(train_rdd.take(10))
+    # ###################################################
+    # indexed.createOrReplaceTempView("ratings_idx")
+
+    # results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
+    # print("Results-----------------------------------------------------------------------------------")
+    # print(results.show()  )
+
+    # results.createOrReplaceTempView("final")
+    # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    # print("Cleaned-----------------------------------------------------------------------------------")
+    # print(cleaned.show() )
+    
+    # train_rdd = cleaned.rdd.map(tuple)
+    # print("Train_RDD-----------------------------------------------------------------------------------")
+    # print(train_rdd.take(10))
     
     # from pyspark.mllib.recommendation import ALS
     # model=ALS.trainImplicit(train_rdd, rank=5, iterations=3, alpha=0.99)
 
-#     print(model)
+    # print(model)
     
     
     
