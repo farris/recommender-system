@@ -14,12 +14,15 @@ import sys
 from pyspark.ml import Pipeline
 
 #%%
-def main(spark, sc,file_path):
+def main(spark, sc):
 
-    f = 0   ##input file flag
+    i = 1
+    file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
+                'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
+                'hdfs:/user/bm106/pub/MSD/cf_test.parquet']
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    schemaRatings0 = spark.read.parquet(str(file_path[f]))
+    schemaRatings0 = spark.read.parquet(str(file_path[i]))
     schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
 
     ###################################################
@@ -51,11 +54,11 @@ def main(spark, sc,file_path):
                             """)
     
     # print("Results-----------------------------------------------------------------------------------")
-    #print(results.show()  )
+    print(results.show()  )
     
     #results.createOrReplaceTempView("final")
     #cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-    cleaned = results.rdd
+    #cleaned = results.rdd
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
     
@@ -77,4 +80,4 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('Test').getOrCreate()
     sc = spark.sparkContext
     # Call our main routine
-    main(spark, sc, sys.argv[1:])
+    main(spark, sc)
