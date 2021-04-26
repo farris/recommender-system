@@ -15,8 +15,9 @@ from pyspark.ml import Pipeline
 
 #%%
 def main(spark, sc):
-
-    i = 1
+    ################################
+    i = 0   ### input file flag ####
+    ################################
     file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_test.parquet']
@@ -54,10 +55,10 @@ def main(spark, sc):
                             """)
     
     # print("Results-----------------------------------------------------------------------------------")
-    print(results.show()  )
+    #print(results.show()  )
     
-    #results.createOrReplaceTempView("final")
-    #cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    results.createOrReplaceTempView("final")
+    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
     #cleaned = results.rdd
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
