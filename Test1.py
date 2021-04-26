@@ -29,12 +29,12 @@ def main(spark, sc,file_path):
 
     ###################################################
     schemaRatings.createOrReplaceTempView("ratings")
-    print('1---------')
+    print('1---------')                                         #user_id_index
     # indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
     # indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
     
     # print("2---------")
-    
+                                                                    #track_id_index
     # indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
     
     # print("3---------")
@@ -49,28 +49,29 @@ def main(spark, sc,file_path):
 
     pipeline = Pipeline(stages=indexers)
     indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
-    #indexed.show()
+    
 
 
 #%%
-    # print("Indexed-----------------------------------------------------------------------------------")
+    print("Indexed-----------------------------------------------------------------------------------")
     # print(indexed.show())
     
-    # ###################################################
-    # indexed.createOrReplaceTempView("ratings_idx")
+    ###################################################
+    indexed.createOrReplaceTempView("ratings_idx")
 
-    # results = spark.sql("SELECT user_id, track_id, count, CAST(user_ID_ AS INT) AS userId , CAST(trackId AS INT) AS trackId FROM ratings_idx")
-    # print("Results-----------------------------------------------------------------------------------")
-    # print(results.show()  )
+    results = spark.sql("SELECT user_id, track_id, count, CAST(user_id_index AS INT) AS userId , CAST(track_id_index AS INT) AS trackId FROM ratings_idx")
+    print("Results-----------------------------------------------------------------------------------")
+    #print(results.show()  )
 
-    # results.createOrReplaceTempView("final")
-    # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-    # print("Cleaned-----------------------------------------------------------------------------------")
-    # print(cleaned.show() )
+    results.createOrReplaceTempView("final")
+    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    print("Cleaned-----------------------------------------------------------------------------------")
+    #print(cleaned.show() )
     
-    # train_rdd = cleaned.rdd.map(tuple)
-    # print("Train_RDD-----------------------------------------------------------------------------------")
-    # print(train_rdd.take(10))
+    train_rdd = cleaned.rdd.map(tuple)
+    print("Train_RDD-----------------------------------------------------------------------------------")
+    
+    #print(train_rdd.take(10))
     
     # from pyspark.mllib.recommendation import ALS
     # model=ALS.trainImplicit(train_rdd, rank=5, iterations=3, alpha=0.99)
