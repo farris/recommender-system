@@ -13,7 +13,7 @@ import sys
 
 from pyspark.ml import Pipeline
 
-
+#%%
 def main(spark, sc,file_path):
 
     
@@ -21,35 +21,17 @@ def main(spark, sc,file_path):
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[0]))
     schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
-    print("Original Size-----------------------------------------------------------------------------------")
-    #print(initial1.count())
-    
-    print("Sample Size-----------------------------------------------------------------------------------")
-    #schemaRatings = initial1.sample(0.001, 123)
 
     ###################################################
     schemaRatings.createOrReplaceTempView("ratings")
-    print('1---------')                                         #user_id_index
-    # indexer_user = StringIndexer(inputCol="user_id", outputCol="user_ID_")
-    # indexed = indexer_user.fit(schemaRatings).transform(schemaRatings)
-    
-    # print("2---------")
-                                                                    #track_id_index
-    # indexer_track = StringIndexer(inputCol="track_id", outputCol="trackId")
-    
-    # print("3---------")
-    
-    # indexed = indexed.sort(col("track_id"))
-
-    # print("4---------")
-    # indexed = indexer_track.fit(indexed).transform(indexed) 
+                                    
+ 
     indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) \
         for column in list(set(schemaRatings.columns)-set(['count'])-set(['count'])-set(['__index_level_0__'])) ]
 
 
     pipeline = Pipeline(stages=indexers)
     indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
-    
 
 
 #%%
@@ -60,11 +42,12 @@ def main(spark, sc,file_path):
     indexed.createOrReplaceTempView("ratings_idx")
 
     results = spark.sql("SELECT user_id, track_id, count, CAST(user_id_index AS INT) AS userId , CAST(track_id_index AS INT) AS trackId FROM ratings_idx")
+    
     # print("Results-----------------------------------------------------------------------------------")
     # print(results.show()  )
-
-    #results.createOrReplaceTempView("final")
-    #cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    cleaned = results.rdd
+    # results.createOrReplaceTempView("final")
+    # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
 
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
