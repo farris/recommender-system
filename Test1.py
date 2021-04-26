@@ -16,7 +16,7 @@ from pyspark.ml import Pipeline
 #%%
 def main(spark, sc,file_path):
 
-    f = 1   ##input file flag
+    f = 0   ##input file flag
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[f]))
