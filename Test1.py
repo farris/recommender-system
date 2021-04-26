@@ -53,15 +53,15 @@ def main(spark, sc,file_path):
     # print("Results-----------------------------------------------------------------------------------")
     #print(results.show()  )
     
-    results.createOrReplaceTempView("final")
-    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-
+    #results.createOrReplaceTempView("final")
+    #cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    cleaned = results.rdd
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
     
     #train_rdd = cleaned.rdd
     # print("Train_RDD-----------------------------------------------------------------------------------")
-    train_rdd = cleaned.rdd
+    
     # print(train_rdd.take(10))
     
     # from pyspark.mllib.recommendation import ALS
