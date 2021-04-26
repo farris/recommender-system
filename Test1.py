@@ -69,7 +69,7 @@ def main(spark, sc,file_path):
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
     
-    #train_rdd = cleaned.rdd.map(tuple)
+    train_rdd = cleaned.rdd
     # print("Train_RDD-----------------------------------------------------------------------------------")
     
     # print(train_rdd.take(10))
