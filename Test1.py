@@ -57,9 +57,9 @@ def main(spark, sc,file_path):
     # print(indexed.show())
     
     # ###################################################
-    # indexed.createOrReplaceTempView("ratings_idx")
+    indexed.createOrReplaceTempView("ratings_idx")
 
-    # results = spark.sql("SELECT user_id, track_id, count, CAST(user_id_index AS INT) AS userId , CAST(track_id_index AS INT) AS trackId FROM ratings_idx")
+    results = spark.sql("SELECT user_id, track_id, count, CAST(user_id_index AS INT) AS userId , CAST(track_id_index AS INT) AS trackId FROM ratings_idx")
     # print("Results-----------------------------------------------------------------------------------")
     # print(results.show()  )
 
