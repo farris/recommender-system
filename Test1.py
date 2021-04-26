@@ -49,7 +49,7 @@ def main(spark, sc,file_path):
 
     pipeline = Pipeline(stages=indexers)
     indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
-    #indexed.show()
+    indexed.show()
 
 
 #%%
