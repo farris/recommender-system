@@ -16,7 +16,7 @@ from pyspark.ml import Pipeline
 #%%
 def main(spark, sc,file_path):
 
-    f = 1
+    f = 1   ##input file flag
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[f]))
@@ -51,10 +51,10 @@ def main(spark, sc,file_path):
                             """)
     
     # print("Results-----------------------------------------------------------------------------------")
-    print(results.show()  )
+    #print(results.show()  )
     
-    # results.createOrReplaceTempView("final")
-    # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    results.createOrReplaceTempView("final")
+    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
 
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
