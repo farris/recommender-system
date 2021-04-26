@@ -45,7 +45,7 @@ def main(spark, sc,file_path):
     
     # print("Results-----------------------------------------------------------------------------------")
     # print(results.show()  )
-    cleaned = results.rdd
+    
     # results.createOrReplaceTempView("final")
     # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
 
