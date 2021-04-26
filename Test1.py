@@ -20,7 +20,7 @@ def main(spark, sc,file_path):
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[0]))
-    schemaRatings = schemaRatings0.sort(col("user_id"))
+    schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
     print("Original Size-----------------------------------------------------------------------------------")
     #print(initial1.count())
     
