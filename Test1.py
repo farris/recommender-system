@@ -46,7 +46,7 @@ def main(spark, sc,file_path):
                                 CAST(track_id_index AS INT) AS trackId FROM ratings_idx
                             
                             
-                            
+                        
                             
                             """)
     
@@ -61,7 +61,7 @@ def main(spark, sc,file_path):
     
     #train_rdd = cleaned.rdd
     # print("Train_RDD-----------------------------------------------------------------------------------")
-    
+    train_rdd = cleaned.rdd
     # print(train_rdd.take(10))
     
     # from pyspark.mllib.recommendation import ALS
