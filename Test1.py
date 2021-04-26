@@ -34,8 +34,10 @@ def main(spark, sc,file_path):
     
     print("3---------")
     
-
-    #indexed = indexer_track.fit(indexed0).transform(indexed0) 
+    indexed10 = indexed.sort(col("track_id"))
+    
+    print("4---------")
+    indexed = indexer_track.fit(indexed10).transform(indexed10) 
     
     print("Indexed-----------------------------------------------------------------------------------")
     #print(indexed.show())
