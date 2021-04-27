@@ -13,7 +13,7 @@ import sys
 #%%
 def main(spark, sc):
     ################################
-    i = 1   ### input file flag ####
+    i = 0   ### input file flag ####
     ################################
     file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
