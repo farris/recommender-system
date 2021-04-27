@@ -24,7 +24,7 @@ def main(spark, sc):
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[i]))
-    schemaRatings = schemaRatings0.sort(col('count'))
+    schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
 
     ###################################################
     schemaRatings.createOrReplaceTempView("ratings")
@@ -34,8 +34,13 @@ def main(spark, sc):
         for column in list(set(schemaRatings.columns)-set(['count'])-set(['count'])-set(['__index_level_0__'])) ]
 
 
-    pipeline = Pipeline(stages=indexers)
-    indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
+    writer = indexers._call_java("write")
+    writer.save("indexers")
+
+
+
+    # pipeline = Pipeline(stages=indexers)
+    # indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
 
 
 #%%
@@ -43,36 +48,38 @@ def main(spark, sc):
     # print(indexed.show())
     
     # ###################################################
-    indexed.createOrReplaceTempView("ratings_idx")
+    # indexed.createOrReplaceTempView("ratings_idx")
 
-    results = spark.sql("""
-                            SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
-                                CAST(track_id_index AS INT) AS trackId FROM ratings_idx
+    # results = spark.sql("""
+    #                         SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
+    #                             CAST(track_id_index AS INT) AS trackId FROM ratings_idx
                             
                             
                         
                             
-                            """)
+    #                         """)
     
     # print("Results-----------------------------------------------------------------------------------")
     #print(results.show()  )
     
-    results.createOrReplaceTempView("final")
-    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-    cleaned = cleaned.rdd
-    # print("Cleaned-----------------------------------------------------------------------------------")
-    # print(cleaned.show() )
+    # results.createOrReplaceTempView("final")
+    # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
     
-    #train_rdd = cleaned.rdd
-    # print("Train_RDD-----------------------------------------------------------------------------------")
-    
-    # print(train_rdd.take(10))
-    
-    # from pyspark.mllib.recommendation import ALS
-    # model=ALS.trainImplicit(train_rdd, rank=5, iterations=3, alpha=0.99)
+        
+    # files = ['train']
+   
+    # for f,z in zip(file_path,files):
+        
+    #     df = spark.read.parquet(str(f))
+        
+    #     df1 = df.repartition(1000)
+        
+    #     path = 'hdfs:/user/fda239/'+z+'.parquet'
+        
+    #     df1.write.mode("overwrite").parquet(path)
 
-    # print(model)
-    
+
+
     
     
 if __name__ == "__main__":
