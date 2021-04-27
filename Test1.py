@@ -94,13 +94,13 @@ def main(spark, sc):
     print('-----------------------------------------------')
     users = cleaned.select(als.getUserCol()).distinct().limit(3)
     userSubsetRecs = model.recommendForUserSubset(users, 10)
-    print(userSubsetRecs.show())
+    userSubsetRecs.show(False)
     print('-----------------------------------------------')
     print('Generate top 10 user recommendations for a specified set of movies')
     print('-----------------------------------------------') 
     movies = cleaned.select(als.getItemCol()).distinct().limit(3)
     movieSubSetRecs = model.recommendForItemSubset(movies, 10)
-    print(movieSubSetRecs.show())
+    movieSubSetRecs.show(False)
     
 
 if __name__ == "__main__":
