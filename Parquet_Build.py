@@ -59,4 +59,10 @@ def main(spark, sc):
             final.write.mode("overwrite").parquet(path)
     ##### PARQUET BUILD #####
 
+#%% Func call
+if __name__ == "__main__":
 
+    # Create the spark session object
+    spark = SparkSession.builder.appName('Test').getOrCreate()
+    sc = spark.sparkContext
+    main(spark, sc)
