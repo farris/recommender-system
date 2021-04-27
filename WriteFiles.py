@@ -24,7 +24,7 @@ def main(spark, file_type):
         
     path = '/home/zm2114/final-project-team7/cf_'+file_type+'.parquet'
         
-    df.write.mode("overwrite").parquet(path)    
+    df.write.parquet(path)    
     print("File written to " + path)
     
                             
