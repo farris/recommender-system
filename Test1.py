@@ -8,12 +8,15 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml import Pipeline
+from pyspark.mllib.recommendation import ALS
+from pyspark.sql import Row
+from pyspark.ml.evaluation import RegressionEvaluator
 import sys 
 
 #%%
 def main(spark, sc):
     ################################
-    i = 0   ### input file flag ####
+    i = 1   ### input file flag ####
     ################################
     file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
@@ -53,15 +56,23 @@ def main(spark, sc):
                             """)
     
     # print("Results-----------------------------------------------------------------------------------")
-    #print(results.show()  )
+    
+   
     
     results.createOrReplaceTempView("final")
     cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-    cleaned = cleaned.rdd
-     
+    
 
-    from pyspark.mllib.recommendation import ALS
-    model=ALS.trainImplicit(cleaned, rank=5, iterations=3, alpha=0.99)
+    (training, test) = cleaned.randomSplit([0.8, 0.2])
+
+###############################################
+    als = ALS(maxIter=5, regParam=0.01, userCol="userId", itemCol="trackId", ratingCol="count")
+    model = als.trainImplicit(training)
+    predictions = model.transform(test)
+    evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
+                                    predictionCol="prediction")
+    rmse = evaluator.evaluate(predictions)
+    print("Root-mean-square error = " + str(rmse))
 
 
 if __name__ == "__main__":
