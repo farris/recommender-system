@@ -75,6 +75,8 @@ def main(spark, sc):
     evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
                                 predictionCol="prediction")
     rmse = evaluator.evaluate(predictions)
+    print("Root-mean-square error = " + str(rmse))
+
     
 
 if __name__ == "__main__":
