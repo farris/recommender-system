@@ -67,8 +67,8 @@ def main(spark, sc):
     #training  = training.rdd
     
 ###############################################
-    als = ALS(rank = 10, maxIter=8, regParam=0.01, userCol="userId", itemCol="trackId", ratingCol="count",
-            implicitPrefs = True)
+    als = ALS(rank = 10, maxIter=8, userCol="userId", itemCol="trackId", ratingCol="count",
+                    alpha = .99, implicitPrefs = True)
     model = als.fit(training)
     
     predictions = model.transform(test)
