@@ -20,9 +20,9 @@ from pyspark.sql import SparkSession
 def main(spark, file_type):
     df = spark.read.parquet("hdfs:/user/bm106/pub/MSD/cf_" + str(file_type) + ".parquet")
         
-    df = df.repartition(1000)
+#     df = df.repartition(1000)
         
-    path = '/home/zm2114/final-project-team7/cf_'+file_type+'.parquet'
+    path = 'hdfs:/user/zm2114/pub/cf_'+file_type+'.parquet'
         
     df.write.parquet(path)    
     print("File written to " + path)
