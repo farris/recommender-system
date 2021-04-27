@@ -7,16 +7,13 @@ from pyspark import SparkContext,  SparkConf
 from pyspark.sql.types import *
 from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
-import sys 
-
-
-
 from pyspark.ml import Pipeline
+import sys 
 
 #%%
 def main(spark, sc):
     ################################
-    i = 0   ### input file flag ####
+    i = 1   ### input file flag ####
     ################################
     file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
@@ -25,63 +22,45 @@ def main(spark, sc):
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[i]))
     schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
-
-    ###################################################
     schemaRatings.createOrReplaceTempView("ratings")
+    ###################################################
+   
                                     
  
     indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) \
         for column in list(set(schemaRatings.columns)-set(['count'])-set(['count'])-set(['__index_level_0__'])) ]
 
-
-    writer = indexers._call_java("write")
-    writer.save("indexers")
+    
 
 
-
-    # pipeline = Pipeline(stages=indexers)
-    # indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
-
+    pipeline = Pipeline(stages=indexers)
+    indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
+    
+  
 
 #%%
     # print("Indexed-----------------------------------------------------------------------------------")
     # print(indexed.show())
     
     # ###################################################
-    # indexed.createOrReplaceTempView("ratings_idx")
+    indexed.createOrReplaceTempView("ratings_idx")
 
-    # results = spark.sql("""
-    #                         SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
-    #                             CAST(track_id_index AS INT) AS trackId FROM ratings_idx
+    results = spark.sql("""
+                            SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
+                                CAST(track_id_index AS INT) AS trackId FROM ratings_idx
                             
                             
                         
                             
-    #                         """)
+                            """)
     
     # print("Results-----------------------------------------------------------------------------------")
     #print(results.show()  )
     
-    # results.createOrReplaceTempView("final")
-    # cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-    
-        
-    # files = ['train']
-   
-    # for f,z in zip(file_path,files):
-        
-    #     df = spark.read.parquet(str(f))
-        
-    #     df1 = df.repartition(1000)
-        
-    #     path = 'hdfs:/user/fda239/'+z+'.parquet'
-        
-    #     df1.write.mode("overwrite").parquet(path)
-
-
-
-    
-    
+    results.createOrReplaceTempView("final")
+    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
+    cleaned = cleaned.rdd
+     
 if __name__ == "__main__":
 
     # Create the spark session object
