@@ -69,14 +69,18 @@ def main(spark, sc):
     
 ###############################################
     als = ALS(rank = 10, maxIter=10, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
-                    alpha = .99, implicitPrefs = True)
+                    alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
     model = als.fit(training)
     
     predictions = model.transform(test)
     evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
                                 predictionCol="prediction")
     rmse = evaluator.evaluate(predictions)
+    print('-----------------------------------------------')
+    print('-----------------------------------------------')
     print("Root-mean-square error = " + str(rmse))
+    print('-----------------------------------------------')
+    print('-----------------------------------------------')
 
     
 
