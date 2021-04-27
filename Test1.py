@@ -64,7 +64,7 @@ def main(spark, sc):
     
 
     (training, test) = cleaned.randomSplit([0.8, 0.2])
-    training  = training.rdd
+    #training  = training.rdd
     
 ###############################################
     als = ALS(rank = 3, maxIter=2, regParam=0.01, userCol="userId", itemCol="trackId", ratingCol="count",
