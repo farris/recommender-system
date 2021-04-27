@@ -3,7 +3,7 @@ from pyspark import SparkContext,  SparkConf
 from pyspark.sql.types import *
 from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
-from pyspark.ml import Pipeline
+from pyspark.ml import Pipeline, PipelineModel
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
