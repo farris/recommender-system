@@ -71,6 +71,10 @@ def main(spark, sc):
             implicitPrefs = True)
     model = als.fit(training)
     
+    predictions = model.transform(test)
+    evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
+                                predictionCol="prediction")
+    rmse = evaluator.evaluate(predictions)
     
 
 if __name__ == "__main__":
