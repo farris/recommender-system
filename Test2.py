@@ -9,9 +9,15 @@ from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 import sys 
 # %% Clean and Index Data
-def indexer(spark,schemaRatings,sc,pipelineModel):
+def cleaner(spark,schemaRatings,sc,pipelineModel):
     indexed = pipelineModel.transform(schemaRatings)
-    return indexed
+    indexed.createOrReplaceTempView("ratings_idx")
+    results = spark.sql("""
+                            SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
+                                CAST(track_id_index AS INT) AS trackId FROM ratings_idx
+                                        
+                            """)
+    return results
 #%% Main
 
 def main(spark, sc):
@@ -26,6 +32,7 @@ def main(spark, sc):
     spark.conf.set("spark.blacklist.enabled", "False")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     
+
     path = 'hdfs:/user/fda239/hash'
     pipelineModel = PipelineModel.load(path)
 
@@ -33,7 +40,8 @@ def main(spark, sc):
     out = []
     for j in i:
         schemaRatings0 = spark.read.parquet(str(file_path[j]))
-        out.append(       indexer(spark,schemaRatings0,sc,pipelineModel)         )
+        schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
+        out.append(       cleaner(spark,schemaRatings,sc,pipelineModel)         )
     
     training,test = out
     ##############################################################
