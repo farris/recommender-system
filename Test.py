@@ -12,7 +12,7 @@ from pyspark.sql.types import *
 from pyspark.ml.feature import StringIndexer
 
 def main(spark, sc):
-    sc.setLogLevel("OFF")
+    sc.setLogLevel("ERROR")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     ratings = sc.textFile('kaggle.txt') \
             .map(lambda x:x.split("\t"))\
