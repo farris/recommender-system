@@ -24,7 +24,7 @@ def main(spark, sc):
     sc.setLogLevel("OFF")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[i]))
-    schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
+    schemaRatings = schemaRatings0.sort(col('count'))
 
     ###################################################
     schemaRatings.createOrReplaceTempView("ratings")
