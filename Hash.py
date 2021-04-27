@@ -24,37 +24,45 @@ def int_maker(spark,indexed,sc):
 #%% Function Defintions
 
 def main(spark, sc):
-    ###############################################################
+    ##############################################
     sc.setLogLevel("OFF")
     spark.conf.set("spark.blacklist.enabled", "False")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    ###############################################################
+    ##############################################
     file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_test.parquet']
     files = ['train','validation','test']
-    ###############################################################
+    ##############################################
     
     ##### Read in data and build uniform index on train
     schemaRatings = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train_new.parquet')
     schemaRatings_train = schemaRatings.sort(col('__index_level_0__'))
     indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings_train) \
-                for column in list(set(schemaRatings_train.columns)-set(['count'])-set(['__index_level_0__'])) ]
+                for column in list(set(schemaRatings.columns)-set(['count'])-set(['__index_level_0__'])) ]
     pipeline = Pipeline(stages=indexers)
-    
+    indexed = pipeline.fit(schemaRatings)
+    path = 'hdfs:/user/fda239/hash'
+    indexed.save(path)
     ##### Fit index to each dataset
 
-    for f,z in zip(file_path,files):
-    
-        df = spark.read.parquet(f)
-        df = df.sort(col('__index_level_0__'))
-        indexed = pipeline.fit(df).transform(df)
-        final = int_maker(spark,indexed,sc)
+        # for f,z in zip(file_path,files):
+        
+        #     df = spark.read.parquet(f)
+        #     df = df.sort(col('__index_level_0__'))
+        #     indexed = pipeline.fit(df).transform(df)
+        #     final = int_maker(spark,indexed,sc)
 
-        path = 'hdfs:/user/fda239/'+ z +'.parquet'
+        #     path = 'hdfs:/user/fda239/'+z+'.parquet'
 
-        final.write.mode("overwrite").parquet(path)
+        #     final.write.mode("overwrite").parquet(path)
 
+        
+        # ##### Write it out
+        # path = 'hdfs:/user/fda239/'+z+'.parquet'
+        # final.write.mode("overwrite").parquet(path)
+
+  
 
 #%% Func call
 if __name__ == "__main__":

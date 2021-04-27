@@ -87,6 +87,9 @@ def main(spark, sc):
     movies = cleaned.select(als.getItemCol()).distinct().limit(3)
     movieSubSetRecs = model.recommendForItemSubset(movies, 10)
     movieSubSetRecs.show(truncate=False)
+
+
+    
     
 #%% Func call
 if __name__ == "__main__":
