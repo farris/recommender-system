@@ -43,7 +43,7 @@ def main(spark, sc):
     pipeline = Pipeline(stages=indexers)
     indexed = pipeline.fit(schemaRatings)
     path = 'hdfs:/user/fda239/hash'
-    indexed.write.mode("overwrite").save(path)
+    indexed.save(path)
       
     ##### Fit index to each dataset
 
