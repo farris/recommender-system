@@ -64,14 +64,11 @@ def main(spark, sc):
     
 
     (training, test) = cleaned.randomSplit([0.8, 0.2])
-
+    training  = training.rdd
+    test  = test.rdd
 ###############################################
-    model = ALS.trainImplicit(rank = 3, maxIter=1, regParam=0.01, userCol="userId", itemCol="trackId", ratingCol="count")
-    predictions = model.transform(test)
-    evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
-                                    predictionCol="prediction")
-    rmse = evaluator.evaluate(predictions)
-    print("Root-mean-square error = " + str(rmse))
+    model = ALS.trainImplicit(training, rank=5, iterations=3, alpha=0.99)
+    
 
 
 if __name__ == "__main__":
