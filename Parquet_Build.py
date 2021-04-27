@@ -47,16 +47,16 @@ def main(spark, sc):
     path = 'hdfs:/user/fda239/hash' 
     pipelineModel = PipelineModel.load(path)
 
-    for f,z in zip(file_path,files):
-        
-            df = spark.read.parquet(f)
-            df = df.sort(col('__index_level_0__'))
-            df = pipelineModel.transform(df) 
-            final = cleaner(spark,df,sc)
+    
+    #Train########    
+    df = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train_new.parquet')
+    df = df.sort(col('__index_level_0__'))
+    df = pipelineModel.transform(df) 
+    final = cleaner(spark,df,sc)
 
-            path = 'hdfs:/user/fda239/'+z+'.parquet'
+    path = 'hdfs:/user/fda239/'+'train'+'.parquet'
 
-            final.write.mode("overwrite").parquet(path)
+    final.write.mode("overwrite").parquet(path)
     ##### PARQUET BUILD #####
 
 #%% Func call
