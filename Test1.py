@@ -49,9 +49,7 @@ def main(spark, sc):
                             SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
                                 CAST(track_id_index AS INT) AS trackId FROM ratings_idx
                             
-                            
-                        
-                            
+                                           
                             """)
     
     # print("Results-----------------------------------------------------------------------------------")
@@ -61,6 +59,11 @@ def main(spark, sc):
     cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
     cleaned = cleaned.rdd
      
+
+    from pyspark.mllib.recommendation import ALS
+    model=ALS.trainImplicit(cleaned, rank=5, iterations=3, alpha=0.99)
+
+
 if __name__ == "__main__":
 
     # Create the spark session object
