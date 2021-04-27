@@ -18,7 +18,7 @@ from pyspark.sql import functions as F
 from pyspark.sql import SparkSession
 
 def main(spark, file_type):
-    df = spark.read.parquet("hdfs:/user/bm106/pub/MSD/cf_" + file_type + ".parquet")
+    df = spark.read.parquet("hdfs:/user/bm106/pub/MSD/cf_" + str(file_type) + ".parquet")
         
     df = df.repartition(1000)
         
