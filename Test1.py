@@ -66,7 +66,7 @@ def main(spark, sc):
     (training, test) = cleaned.randomSplit([0.8, 0.2])
 
 ###############################################
-    als = ALS(maxIter=5, regParam=0.01, userCol="userId", itemCol="trackId", ratingCol="count")
+    als = ALS(rank = 3, maxIter=1, regParam=0.01, userCol="userId", itemCol="trackId", ratingCol="count")
     model = als.trainImplicit(training)
     predictions = model.transform(test)
     evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
