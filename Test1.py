@@ -8,9 +8,9 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml import Pipeline
-from pyspark.mllib.recommendation import ALS
-from pyspark.sql import Row
 from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.ml.recommendation import ALS
+from pyspark.sql import Row
 import sys 
 
 #%%
