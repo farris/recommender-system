@@ -59,7 +59,7 @@ def main(spark, sc):
     
     results.createOrReplaceTempView("final")
     cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-    #cleaned = results.rdd
+    cleaned = cleaned.rdd
     # print("Cleaned-----------------------------------------------------------------------------------")
     # print(cleaned.show() )
     
