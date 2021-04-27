@@ -67,10 +67,10 @@ def main(spark, sc):
     training  = training.rdd
     
 ###############################################
-    model = ALS.trainImplicit(training, rank=5, iterations=3, alpha=0.99)
+    model = ALS.trainImplicit(training, rank=4, iterations=2, alpha=0.99)
     
     predictions = model.transform(test)
-    evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
+    evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
                                     predictionCol="prediction")
     rmse = evaluator.evaluate(predictions)
     print("Root-mean-square error = " + str(rmse))
