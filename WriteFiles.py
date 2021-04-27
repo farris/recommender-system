@@ -22,10 +22,10 @@ def main(spark, file_type):
         
     df = df.repartition(1000)
         
-    path = '/scratch/zm2114/cf_'+file_type+'.parquet'
+    path = '/home/zm2114/final-project-team7/cf_'+file_type+'.parquet'
         
     df.write.mode("overwrite").parquet(path)    
-    print("File written to /scratch/zm2114/")
+    print("File written to " + path)
     
                             
 if __name__ == "__main__":
