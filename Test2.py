@@ -9,37 +9,13 @@ from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 import sys 
 # %% Clean and Index Data
-def cleaner(spark,schemaRatings0,sc):
-
-    schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
-    schemaRatings.createOrReplaceTempView("ratings")
-
-
-
-    indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) \
-        for column in list(set(schemaRatings.columns)-set(['count'])-set(['count'])-set(['__index_level_0__'])) ]
-
-    pipeline = Pipeline(stages=indexers)
-    indexed = pipeline.fit(schemaRatings).transform(schemaRatings)
-    
-
-
-    indexed.createOrReplaceTempView("ratings_idx")
-    results = spark.sql("""
-                            SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
-                                CAST(track_id_index AS INT) AS trackId FROM ratings_idx
-                            
-                                        
-                            """)
-    
-    results.createOrReplaceTempView("final")
-    cleaned = spark.sql("SELECT userId, trackId ,count FROM final")
-
-    return cleaned
+def indexer(spark,schemaRatings,sc,pipelineModel):
+    indexed = pipelineModel.transform(schemaRatings)
+    return indexed
 #%% Main
 
 def main(spark, sc):
-  
+    
     #Train set,Test Set###########################################
     i = [1,2]   ### input file flag #### 0 = Train | 1 = Val | 2 = Test
     ##############################################################
@@ -50,49 +26,69 @@ def main(spark, sc):
     spark.conf.set("spark.blacklist.enabled", "False")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     
+    path = 'hdfs:/user/fda239/hash'
+    pipelineModel = PipelineModel.load(path)
+
+
     out = []
     for j in i:
         schemaRatings0 = spark.read.parquet(str(file_path[j]))
-        out.append( cleaner(spark,schemaRatings0,sc) )
+        out.append(       indexer(spark,schemaRatings0,sc,pipelineModel)         )
     
     training,test = out
     ##############################################################
+    training.createOrReplaceTempView("training")
+    results = spark.sql("""
+                            SELECT user_id, track_id FROM training
+                            WHERE userId = 700105
+                     
+                            """)
 
-    #Training#####################################################
-    als = ALS(rank = 10, maxIter=7, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
-                    alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
-    model = als.fit(training)
-    ##############################################################
+    results.show()
+    print('-----------------------------------------------')
+    test.createOrReplaceTempView("test")
+    results1 = spark.sql("""
+                            SELECT user_id, track_id FROM test
+                            WHERE userId = 700105
+                     
+                            """)
+    results1.show()
 
-    #error########################################################
-    predictions = model.transform(test)
-    evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
-                                predictionCol="prediction")
-    rmse = evaluator.evaluate(predictions)
-    ##############################################################
+    # #Training#####################################################
+    # als = ALS(rank = 10, maxIter=7, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
+    #                 alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+    # model = als.fit(training)
+    # ##############################################################
 
-    print('-----------------------------------------------')
-    print('-----------------------------------------------')
-    print("Root-mean-square error = " + str(rmse))
-    print('-----------------------------------------------')
-    print('-----------------------------------------------')
+    # #error########################################################
+    # predictions = model.transform(test)
+    # evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
+    #                             predictionCol="prediction")
+    # rmse = evaluator.evaluate(predictions)
+    # ##############################################################
+
+    # print('-----------------------------------------------')
+    # print('-----------------------------------------------')
+    # print("Root-mean-square error = " + str(rmse))
+    # print('-----------------------------------------------')
+    # print('-----------------------------------------------')
     
-    print('')
-    print('')
-    print('')
+    # print('')
+    # print('')
+    # print('')
 
-    print('-----------------------------------------------')
-    print('Generate top 10 movie recommendations for a specified set of users')
-    print('-----------------------------------------------')
-    users = test.select(als.getUserCol()).distinct().limit(3)
-    userSubsetRecs = model.recommendForUserSubset(users, 10)
-    userSubsetRecs.show(truncate=False)
-    print('-----------------------------------------------')
-    print('Generate top 10 user recommendations for a specified set of movies')
-    print('-----------------------------------------------') 
-    movies = test.select(als.getItemCol()).distinct().limit(3)
-    movieSubSetRecs = model.recommendForItemSubset(movies, 10)
-    movieSubSetRecs.show(truncate=False)
+    # print('-----------------------------------------------')
+    # print('Generate top 10 movie recommendations for a specified set of users')
+    # print('-----------------------------------------------')
+    # users = test.select(als.getUserCol()).distinct().limit(3)
+    # userSubsetRecs = model.recommendForUserSubset(users, 10)
+    # userSubsetRecs.show(truncate=False)
+    # print('-----------------------------------------------')
+    # print('Generate top 10 user recommendations for a specified set of movies')
+    # print('-----------------------------------------------') 
+    # movies = test.select(als.getItemCol()).distinct().limit(3)
+    # movieSubSetRecs = model.recommendForItemSubset(movies, 10)
+    # movieSubSetRecs.show(truncate=False)
     
 #%% Func call
 if __name__ == "__main__":
