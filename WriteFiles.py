@@ -33,4 +33,4 @@ if __name__ == "__main__":
     # Create the spark session object
     spark = SparkSession.builder.appName('part1').getOrCreate()
 
-    main(spark, sys.argv[1:])
+    main(spark, sys.argv[1])
