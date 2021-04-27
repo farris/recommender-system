@@ -22,6 +22,7 @@ def main(spark, sc):
                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_test.parquet']
     sc.setLogLevel("OFF")
+    spark.conf.set("spark.blacklist.enabled", "False")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     schemaRatings0 = spark.read.parquet(str(file_path[i]))
     schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
@@ -67,7 +68,7 @@ def main(spark, sc):
     #training  = training.rdd
     
 ###############################################
-    als = ALS(rank = 10, maxIter=100, userCol="userId", itemCol="trackId", ratingCol="count",
+    als = ALS(rank = 15, maxIter=100, userCol="userId", itemCol="trackId", ratingCol="count",
                     alpha = .99, implicitPrefs = True)
     model = als.fit(training)
     
