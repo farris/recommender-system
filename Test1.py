@@ -38,7 +38,7 @@ def main(spark, sc):
     path = 'hdfs:/user/fda239/hash'
     pipelineModel = PipelineModel.load(path)
     indexed = pipelineModel.transform(schemaRatings)
-
+    
 
 #%% Converting Indexes to Int type & selecting necessary columns
 

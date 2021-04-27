@@ -1,3 +1,4 @@
+# %% Imports
 from pyspark.sql import SparkSession
 from pyspark import SparkContext,  SparkConf
 from pyspark.sql.types import *
@@ -8,9 +9,9 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 import sys 
-# %% Clean and Index Data
-def cleaner(spark,schemaRatings,sc,pipelineModel):
-    indexed = pipelineModel.transform(schemaRatings)
+# %% Convert Mapped Index Columns to Int Type
+def cleaner(spark,indexed,sc):
+    
     indexed.createOrReplaceTempView("ratings_idx")
     results = spark.sql("""
                             SELECT user_id, track_id, count,__index_level_0__, CAST(user_id_index AS INT) AS userId , \
@@ -22,28 +23,28 @@ def cleaner(spark,schemaRatings,sc,pipelineModel):
 
 def main(spark, sc):
     
-    #Train set,Test Set###########################################
-    i = [1,2]   ### input file flag #### 0 = Train | 1 = Val | 2 = Test
-    ##############################################################
+    #Train set,Test Set##################################################
+    i = [1,2]   #### input file flag #### 0 = Train | 1 = Val | 2 = Test
+    #Configs#############################################################
     file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
                 'hdfs:/user/bm106/pub/MSD/cf_test.parquet']
     sc.setLogLevel("OFF")
     spark.conf.set("spark.blacklist.enabled", "False")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
-    
-
     path = 'hdfs:/user/fda239/hash'
     pipelineModel = PipelineModel.load(path)
 
 
     out = []
     for j in i:
-        schemaRatings0 = spark.read.parquet(str(file_path[j]))
-        schemaRatings = schemaRatings0.sort(col('__index_level_0__'))
-        out.append(       cleaner(spark,schemaRatings,sc,pipelineModel)         )
+        schemaRatings = spark.read.parquet(file_path[j])                ## read in file
+        schemaRatings = schemaRatings.sort(col('__index_level_0__'))    ## sort on index
+        schemaRatings = pipelineModel.transform(schemaRatings)          ## add float mapped columns for user and track
+        out.append(       cleaner(spark,schemaRatings,sc)         )     ## convert float mapped columns to integer
+                                                                        ## call cleaner function
     
-    training,test = out
+    training,test = out   ##unpack list
     ##############################################################
     training.createOrReplaceTempView("training")
     results = spark.sql("""
@@ -104,5 +105,4 @@ if __name__ == "__main__":
     # Create the spark session object
     spark = SparkSession.builder.appName('Test').getOrCreate()
     sc = spark.sparkContext
-    # Call our main routine
     main(spark, sc)
