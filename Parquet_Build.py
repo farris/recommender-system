@@ -25,8 +25,6 @@ def main(spark, sc, file_type):
     pipelineModel = PipelineModel.load(path)
     
     df = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_'+ str(file_type) +'.parquet').select('user_id','track_id','count')
-    total_cores = int(sc._conf.get('spark.executor.instances')) * int(sc._conf.get('spark.executor.cores'))
-    print(total_cores)
     df = df.repartition(1000)
     df = pipelineModel.transform(df) 
     final = cleaner(spark,sc,df)
