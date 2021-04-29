@@ -17,6 +17,13 @@ def main(spark, sc):
     print(schemaRatings.rdd.getNumPartitions())
     indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) \
                 for column in list(set(schemaRatings.columns)-set(['count'])) ]
+    
+                                                                                ###change####
+    #indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").setHandleInvalid("skip").fit(schemaRatings) \
+               # for column in list(set(schemaRatings.columns)-set(['count'])) ]
+        
+        
+        
     pipeline = Pipeline(stages=indexers)
     indexed = pipeline.fit(schemaRatings)
     path = 'hdfs:/user/zm2114/hash'
