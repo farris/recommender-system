@@ -14,16 +14,11 @@ def main(spark, sc):
     
     schemaRatings = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train_new.parquet').select('user_id','track_id','count')
     schemaRatings = schemaRatings.repartition(1000)
-    print(schemaRatings.rdd.getNumPartitions())
-    indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(schemaRatings) \
-                for column in list(set(schemaRatings.columns)-set(['count'])) ]
+#     print(schemaRatings.rdd.getNumPartitions())
+    indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").setHandleInvalid("skip").fit(schemaRatings) \
+               for column in list(set(schemaRatings.columns)-set(['count'])) ]
+        
     
-                                                                                ###change####
-    #indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").setHandleInvalid("skip").fit(schemaRatings) \
-               # for column in list(set(schemaRatings.columns)-set(['count'])) ]
-        
-        
-        
     pipeline = Pipeline(stages=indexers)
     indexed = pipeline.fit(schemaRatings)
     path = 'hdfs:/user/zm2114/hash'
