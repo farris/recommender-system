@@ -14,7 +14,7 @@ def cleaner(spark,sc,indexed):
                             """)
     return results
 
-def main(spark, sc, file_type):
+def main(spark, sc, file_type, repart):
 
     sc.setLogLevel("OFF")
     spark.conf.set("spark.blacklist.enabled", "False")
@@ -25,7 +25,7 @@ def main(spark, sc, file_type):
     pipelineModel = PipelineModel.load(path)
     
     df = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_'+ str(file_type) +'.parquet').select('user_id','track_id','count')
-    df = df.repartition(1000)
+    df = df.repartition(int(repart))
     df = pipelineModel.transform(df) 
     final = cleaner(spark,sc,df)
 
@@ -40,5 +40,6 @@ if __name__ == "__main__":
     sc = spark.sparkContext
     
     file_type = sys.argv[1]
+    repart = sys.argv[2]
     
-    main(spark, sc, file_type)
+    main(spark, sc, file_type, repart)
