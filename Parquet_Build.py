@@ -51,13 +51,13 @@ def main(spark, sc):
 
     
     #Train########    
-    df = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_'+ files[0] +'.parquet')
+    df = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_'+ files[1] +'.parquet')
     df = df.repartition(1000)
 #     df = df.sort(col('__index_level_0__'))
     df = pipelineModel.transform(df) 
     final = cleaner(spark,sc,df)
 
-    path = 'hdfs:/user/zm2114/cf_'+ files[0] +'.parquet'
+    path = 'hdfs:/user/zm2114/cf_'+ files[1] +'.parquet'
 
     final.write.mode("overwrite").parquet(path)
     ##### PARQUET BUILD #####
