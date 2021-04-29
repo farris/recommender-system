@@ -21,11 +21,18 @@ def main(spark, file_type):
     df = spark.read.parquet("hdfs:/user/bm106/pub/MSD/cf_" + str(file_type) + ".parquet")
         
 #     df = df.repartition(1000)
-        
-    path = 'hdfs:/user/zm2114/pub/cf_'+file_type+'.parquet'
-        
-    df.write.parquet(path)    
+    
+    
+    
+    
+    
+    
+    
+    
+    path = 'hdfs:/user/zm2114/pub/cf_'+file_type+'.parquet'   
+    df.write.mode("overwrite").parquet(path)    
     print("File written to " + path)
+    
     
                             
 if __name__ == "__main__":
