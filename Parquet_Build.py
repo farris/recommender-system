@@ -25,6 +25,7 @@ def main(spark, sc):
     sc.setLogLevel("OFF")
     spark.conf.set("spark.blacklist.enabled", "False")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
+    spark.conf.set("spark.hadoop.dfs.replication", 2)
     ##############################################
 #     file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
 #                 'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
