@@ -53,7 +53,7 @@ def main(spark, sc):
     df = df.sort(col('__index_level_0__'))
     df = pipelineModel.transform(df) 
     final = cleaner(spark,df,sc)
-
+    final = final.repartition(10000)
     path = 'hdfs:/user/fda239/'+'train'+'.parquet'
 
     final.write.mode("overwrite").parquet(path)
