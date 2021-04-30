@@ -32,7 +32,7 @@ def main(spark, sc):
     train.createOrReplaceTempView("train")
     results = spark.sql("""
                             SELECT user_id,userId, count FROM train
-                            WHERE user_id == 'e63d3d35d4f3ff7d2ec13111c7d70c12268daf8e'
+                            WHERE count == 1
                             
                         
                             """)
@@ -40,10 +40,10 @@ def main(spark, sc):
     results.show(truncate = False)
 
     print('---------------------------------------------------')
-    val.createOrReplaceTempView("val")
+    test.createOrReplaceTempView("test")
     results1 = spark.sql("""
-                            SELECT user_id, userId, count FROM val
-                            WHERE user_id == 'e63d3d35d4f3ff7d2ec13111c7d70c12268daf8e'
+                            SELECT user_id, userId, count FROM test
+                            WHERE count == 1
                             
                             """)
     results1.show(truncate = False)
