@@ -29,19 +29,20 @@ def main(spark, sc):
     val = spark.read.parquet(file_path[1]) 
     test = spark.read.parquet(file_path[2]) 
 
-    test.createOrReplaceTempView("test")
+    train.createOrReplaceTempView("train")
     results = spark.sql("""
-                            SELECT userId , trackId, count FROM test
+                            SELECT user_id,userId, count FROM train
                             WHERE count == 1
                             
                         
                             """)
+    
     results.show()
-
+    print(file_path[0])
     print('---------------------------------------------------')
     val.createOrReplaceTempView("val")
     results1 = spark.sql("""
-                            SELECT userId , trackId, count FROM val
+                            SELECT user_id, userId, count FROM val
                             WHERE count == 1
                             
                             """)
