@@ -20,17 +20,62 @@ def main(spark, sc):
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
     
   
-    
+    #read in file
     file_path = ['hdfs:/user/zm2114/cf_train_new.parquet',
                  'hdfs:/user/zm2114/cf_validation.parquet',
                  'hdfs:/user/zm2114/cf_test.parquet']
 
-    # train = spark.read.parquet(file_path[0])    
-    # val = spark.read.parquet(file_path[1]) 
+    train = spark.read.parquet(file_path[0])    
+    val = spark.read.parquet(file_path[1]) 
     test = spark.read.parquet(file_path[2]) 
+
+    train.createOrReplaceTempView("train")
+    results = spark.sql("""
+                            SELECT userId , trackId, count FROM train
+                            WHERE count == 1
+                            
+                          
+                            """)
+    results.show()
+
+    # #Training#####################################################
+    # als = ALS(rank = 10, maxIter=7, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
+    #                 alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+    # model = als.fit(training)
+    # ##############################################################
+
+    # #error########################################################
+    # predictions = model.transform(test)
+    # evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
+    #                             predictionCol="prediction")
+    # rmse = evaluator.evaluate(predictions)
+    # ##############################################################
+
+    # print('-----------------------------------------------')
+    # print('-----------------------------------------------')
+    # print("Root-mean-square error = " + str(rmse))
+    # print('-----------------------------------------------')
+    # print('-----------------------------------------------')
     
-    test.createOrReplaceTempView("test")
-    test.show()
+    # print('')
+    # print('')
+    # print('')
+
+    # print('-----------------------------------------------')
+    # print('Generate top 10 movie recommendations for a specified set of users')
+    # print('-----------------------------------------------')
+    # users = test.select(als.getUserCol()).distinct().limit(3)
+    # userSubsetRecs = model.recommendForUserSubset(users, 10)
+    # userSubsetRecs.show(truncate=False)
+    # print('-----------------------------------------------')
+    # print('Generate top 10 user recommendations for a specified set of movies')
+    # print('-----------------------------------------------') 
+    # movies = test.select(als.getItemCol()).distinct().limit(3)
+    # movieSubSetRecs = model.recommendForItemSubset(movies, 10)
+    # movieSubSetRecs.show(truncate=False)
+    
+    
+  
     
 #%% Func call
 if __name__ == "__main__":

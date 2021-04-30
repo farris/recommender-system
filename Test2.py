@@ -26,9 +26,9 @@ def main(spark, sc):
     #Train set,Test Set##################################################
     i = [1,2]   #### input file flag #### 0 = Train | 1 = Val | 2 = Test
     #Configs#############################################################
-    file_path = ['hdfs:/user/bm106/pub/MSD/cf_train_new.parquet',\
-                'hdfs:/user/bm106/pub/MSD/cf_validation.parquet',\
-                'hdfs:/user/bm106/pub/MSD/cf_test.parquet']
+    file_path = ['hdfs:/user/zm2114/cf_train_new.parquet',
+                    'hdfs:/user/zm2114/cf_validation.parquet',
+                'hdfs:/user/zm2114/cf_test.parquet']
     sc.setLogLevel("OFF")
     spark.conf.set("spark.blacklist.enabled", "False")
     spark.conf.set("spark.sql.autoBroadcastJoinThreshold", -1)
