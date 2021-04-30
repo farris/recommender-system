@@ -37,8 +37,8 @@ def main(spark, sc):
                         
                             """)
     
-    results.show()
-    print(file_path[0])
+    results.show(truncate = false)
+
     print('---------------------------------------------------')
     val.createOrReplaceTempView("val")
     results1 = spark.sql("""
@@ -46,7 +46,7 @@ def main(spark, sc):
                             WHERE count == 1
                             
                             """)
-    results1.show()
+    results1.show(truncate = false)
 
     # #Training#####################################################
     # als = ALS(rank = 10, maxIter=7, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
