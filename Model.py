@@ -9,6 +9,11 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
+
+def format(df):
+    df = df.select('userId',"trackId","count") 
+    return df.rdd
+
 #%% Main
 
 def main(spark, sc):
@@ -24,15 +29,12 @@ def main(spark, sc):
                  'hdfs:/user/zm2114/cf_validation.parquet',
                  'hdfs:/user/zm2114/cf_test.parquet']
 
-    train = spark.read.parquet(file_path[0])    
-    #val = spark.read.parquet(file_path[1]) 
-    #test = spark.read.parquet(file_path[2])
-    train  = train.select('userId',"trackId","count") 
-    print(train.count())
-    print('-----------------------------------------------')
-   
-    train = train.rdd
+    train = format(spark.read.parquet(file_path[0]))   
+    val = format(spark.read.parquet(file_path[1])) 
+    test = format(spark.read.parquet(file_path[2]))
+
     print(train.take(5))
+
 
 
 
