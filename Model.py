@@ -6,7 +6,7 @@ from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml import Pipeline, PipelineModel
 from pyspark.ml.evaluation import RegressionEvaluator
-import pyspark.ml.evaluation.RankingEvaluator 
+import pyspark.ml.evaluation
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 import sys   
@@ -40,7 +40,7 @@ def main(spark, sc):
 
     #error########################################################
     predictions = model.transform(test)
-    evaluator = pyspark.ml.evaluation.RankingEvaluator (metricName="meanAveragePrecision", labelCol="count",
+    evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
                                 predictionCol="prediction")
     MAP = evaluator.evaluate(predictions)
     ##############################################################
