@@ -5,7 +5,7 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import col
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml import Pipeline, PipelineModel
-from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.ml.evaluation import RegressionEvaluator, RankingEvaluator
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 import sys   
@@ -25,51 +25,34 @@ def main(spark, sc):
                  'hdfs:/user/zm2114/cf_validation.parquet',
                  'hdfs:/user/zm2114/cf_test.parquet']
 
-    train = spark.read.parquet(file_path[0])    
+    #train = spark.read.parquet(file_path[0])    
     val = spark.read.parquet(file_path[1]) 
     test = spark.read.parquet(file_path[2]) 
 
-    train.createOrReplaceTempView("train")
-    results = spark.sql("""
-                            SELECT user_id,userId, count FROM train
-                            WHERE user_id == '7673f24feaa6e5b228e4392840f33084a7582192'
-                            
-                        
-                            """)
+
+
+    #Training#####################################################
+    als = ALS(rank = 3, maxIter=2, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
+                    alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+    model = als.fit(val)
+    ##############################################################
+
+    #error########################################################
+    predictions = model.transform(test)
+    evaluator = RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
+                                predictionCol="prediction")
+    MAP = evaluator.evaluate(predictions)
+    ##############################################################
+
+    print('-----------------------------------------------')
+    print('-----------------------------------------------')
+    print("MAP = " + str(MAP))
+    print('-----------------------------------------------')
+    print('-----------------------------------------------')
     
-    results.show(truncate = False)
-
-    print('---------------------------------------------------')
-    test.createOrReplaceTempView("test")
-    results1 = spark.sql("""
-                            SELECT user_id, userId, count FROM test
-                            WHERE user_id == '7673f24feaa6e5b228e4392840f33084a7582192'
-                            
-                            """)
-    results1.show(truncate = False)
-
-    # #Training#####################################################
-    # als = ALS(rank = 10, maxIter=7, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
-    #                 alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
-    # model = als.fit(training)
-    # ##############################################################
-
-    # #error########################################################
-    # predictions = model.transform(test)
-    # evaluator = RegressionEvaluator(metricName="rmse", labelCol="count",
-    #                             predictionCol="prediction")
-    # rmse = evaluator.evaluate(predictions)
-    # ##############################################################
-
-    # print('-----------------------------------------------')
-    # print('-----------------------------------------------')
-    # print("Root-mean-square error = " + str(rmse))
-    # print('-----------------------------------------------')
-    # print('-----------------------------------------------')
-    
-    # print('')
-    # print('')
-    # print('')
+    print('')
+    print('')
+    print('')
 
     # print('-----------------------------------------------')
     # print('Generate top 10 movie recommendations for a specified set of users')
