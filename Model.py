@@ -27,8 +27,8 @@ def main(spark, sc):
     train = spark.read.parquet(file_path[0])    
     #val = spark.read.parquet(file_path[1]) 
     #test = spark.read.parquet(file_path[2]) 
-
-    train = train.drop(col('user_id','track_id'))
+    cols = ['user_id','track_id']
+    train = train.drop(*cols)
     train = train.rdd
     train.show()
 
