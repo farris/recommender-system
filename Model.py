@@ -30,7 +30,7 @@ def main(spark, sc):
     cols = ['user_id','track_id']
     train = train.drop(*cols)
     train = train.rdd
-    train.show()
+    train.take(5)
 
 
 
