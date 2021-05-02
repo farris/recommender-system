@@ -3,8 +3,6 @@ from pyspark.sql import SparkSession
 from pyspark import SparkContext,  SparkConf
 from pyspark.sql.types import *
 from pyspark.sql.functions import col
-from pyspark.ml.feature import StringIndexer
-from pyspark.ml import Pipeline, PipelineModel
 from pyspark.ml.evaluation import RegressionEvaluator 
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
@@ -32,12 +30,18 @@ def main(spark, sc):
     train = format(spark.read.parquet(file_path[0]))   
     val = format(spark.read.parquet(file_path[1])) 
     test = format(spark.read.parquet(file_path[2]))
+    
+    als = ALS.trainImplicit(train, rank = 3, iterations=5, \
+                            lambda_=0.01, blocks=-1, alpha=0.01,
+                                nonnegative=False, seed=None)
 
-    print(train.take(5))
+    print(type(als))
+    Columns = ['userId',"trackId","count"]
+    df2 = als.toDF(deptColumns)
+    df2.show()
 
-
-
-
+    # testData = ratings.map(lambda p: (p.user, p.product))
+    # predictions = model.predictAll(testData).map(lambda r: ((r.user, r.product), r.rating))                            
     # #Training#####################################################
     # als = ALS(rank = 3, maxIter=2, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
     #                 alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
