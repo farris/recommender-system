@@ -27,11 +27,10 @@ def main(spark, sc):
     train = spark.read.parquet(file_path[0])    
     #val = spark.read.parquet(file_path[1]) 
     #test = spark.read.parquet(file_path[2])
-    train  = train.select('user_id',"track_id","count") 
+    train  = train.select('userId',"trackId","count") 
     print(train.count())
     print('-----------------------------------------------')
-    cols = ['user_id','track_id']
-    train = train.drop(*cols)
+   
     train = train.rdd
     print(train.take(5))
 
