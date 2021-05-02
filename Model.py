@@ -5,7 +5,7 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import col
 from pyspark.ml.evaluation import RegressionEvaluator 
 from pyspark.mllib.evaluation import RankingMetrics
-from pyspark.ml.recommendation import ALS
+from pyspark.mllib.recommendation import ALS
 from pyspark.sql import Row
 
 def format(df):
