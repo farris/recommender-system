@@ -35,10 +35,12 @@ def main(spark, sc):
                             lambda_=0.01, blocks=-1, alpha=0.01,
                                 nonnegative=False, seed=None)
 
-    print(type(als))
-    Columns = ['userId',"trackId","count"]
-    df2 = als.toDF(deptColumns)
-    df2.show()
+    testdata = val.map(lambda p: (p[0], p[1]))
+    print(testdata.show())
+    print('-----------------------------------------------')
+    predictions = model.predictAll(testdata).map(lambda r: ((r[0], r[1]), r[2]))
+    print(predicitions.show())
+    print('-----------------------------------------------')
 
     # testData = ratings.map(lambda p: (p.user, p.product))
     # predictions = model.predictAll(testData).map(lambda r: ((r.user, r.product), r.rating))                            
