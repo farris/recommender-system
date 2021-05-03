@@ -69,29 +69,20 @@ def main(spark, sc):
     predictions = model.transform(test)  ##test & make predictions
     
 
-    #user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().limit(3)]  ##get list of users
+    user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
-    #test.select(F.col("userId")).filter(F.col("userId").isin(user_list[0:2])).show()
-    
-
-    #userSubsetRecs = model.recommendForUserSubset(user_list[0:2], 2) ## make reccs for a given user
-                   
+    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 3) ## make reccs for a given user
                                                                             ##0 - i
-    users = ratings.select(als.getUserCol()).distinct().limit(3)
-    userSubsetRecs = model.recommendForUserSubset(users, 10) 
-    userSubsetRecs.join(test,userSubsetRecs.userId == test.userId ,"inner").show()                                                                   
-    userSubsetRecs.show()
-    
-    #userSubsetRecs.printSchema()
-    #userSubsetRecs = userSubsetRecs.select("userId", "recommendations.trackId") ##unpack nested recc structure
-    #userSubsetRecs.show()
 
+    userSubsetRecs.printSchema()
+    userSubsetRecs = userSubsetRecs.select("userId", "recommendations.trackId") ##unpack nested recc structure
+    userSubsetRecs.show()
     print('-----------------------------------------------')
-    ground_truth = test.where(test.userId == user_list[0:2]).orderBy('count', ascending=False)
+    ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
     ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
     ground_truth.show()
     print('-----------------------------------------------')
-    #(userSubsetRecs.join(ground_truth,userSubsetRecs.userId == ground_truth.userId ,"inner")).show()
+    
 
 
    
