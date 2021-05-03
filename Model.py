@@ -85,7 +85,7 @@ def main(spark, sc):
     print('-----------------------------------------------')
     k = ground_truth.join(userSubsetRecs,"userId")
     k.show()
-    k = k.rdd
+    k = k.select('collect_list(trackId)',"trackId").rdd
     print(k.take(1))
 
 
