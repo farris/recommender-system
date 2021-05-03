@@ -6,7 +6,7 @@ from pyspark.sql.functions import col
 from pyspark.ml.evaluation import RegressionEvaluator 
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
-from pyspark.sql import Row
+from pyspark.sql import row
 
 # def format(df):
 #     df = df.select('userId',"trackId","count") 
@@ -68,8 +68,9 @@ def main(spark, sc):
     predictions = model.transform(test)  ##test
     
     users = test.select(als.getUserCol()).distinct().limit(2)
-    print(users)
-    print(type(users))
+    users1 = test.select(als.getUserCol()).distinct()
+    print([row['userId'] for row in users1.collect()])
+    
     userSubsetRecs = model.recommendForUserSubset(users, 10)
     
     
