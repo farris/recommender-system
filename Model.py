@@ -78,11 +78,11 @@ def main(spark, sc):
     userSubsetRecs = userSubsetRecs.select("userId", "recommendations.trackId") ##unpack nested recc structure
     userSubsetRecs.show()
     print('-----------------------------------------------')
-    ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
+    ground_truth = test.where(test.userId == user_list[0:2]).orderBy('count', ascending=False)
     ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
     ground_truth.show()
     print('-----------------------------------------------')
-    (userSubsetRecs.join(ground_truth,userSubsetRecs.userID == ground_truth.userID ,"inner")).show()
+    (userSubsetRecs.join(ground_truth,userSubsetRecs.userId == ground_truth.userId ,"inner")).show()
 
 
    
