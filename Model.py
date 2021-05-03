@@ -39,7 +39,7 @@ def main(spark, sc):
     print('-----------------------------------------------')
     predictions = model.recommendProductsForUsers(2)
     print(type(predictions))
-    print(predictions)
+    print(predictions.take(2))
     
     print('-----------------------------------------------')
 
