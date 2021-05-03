@@ -67,11 +67,11 @@ def main(spark, sc):
     #error########################################################
     predictions = model.transform(test)  ##test
     
-    users = test.select(als.getUserCol()).distinct().limit(2)
-    users1 = test.select(als.getUserCol()).distinct()
-    print([row['userId'] for row in users1.collect()])
+    #users = test.select(als.getUserCol()).distinct().limit(2)
+   # users_df = test.select(als.getUserCol()).distinct()
+    user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]
     
-    userSubsetRecs = model.recommendForUserSubset(users, 10)
+    userSubsetRecs = model.recommendForUserSubset(test.where(test.user == user_list[0]), 10)
     
     
     print(userSubsetRecs.show(truncate = False))  
