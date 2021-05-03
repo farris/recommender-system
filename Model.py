@@ -72,15 +72,17 @@ def main(spark, sc):
     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
     userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 20) ## make reccs for a given user
-    
+                                                                            ##0 - i
+
     userSubsetRecs.printSchema()
     userSubsetRecs.select("userId", "recommendations.trackId").show()
     userSubsetRecs.select("recommendations.trackId").show()
     #userSubsetRecs.withColumn("recommendations.trackId", explode(userSubsetRecs.recommendations.trackId)).show()
     
-    
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
-    ground_truth.show()
+    ground_truth = ground_truth.groupby('userId')['trackId'].apply(list)
+    
+    ground_truth.show() ## user_id _trackid _counts 
     
 
      
