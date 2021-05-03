@@ -30,17 +30,17 @@ def main(spark, sc):
     val = format(spark.read.parquet(file_path[1])) 
     test = format(spark.read.parquet(file_path[2]))
     
-    model = ALS.trainImplicit(val, rank = 3, iterations=2, \
+    model = ALS.trainImplicit(train, rank = 3, iterations=2, \
                             lambda_=0.01, blocks=-1, alpha=0.01,
                                 nonnegative=False, seed=None)
 
     testdata = val.map(lambda p: (p[0], p[1]))
     print(testdata.take(5))
     print('-----------------------------------------------')
-    predictions = model.recommendProductsForUsers(2)
+    predictions = model.recommendProducts(1003178, 5)
     print(type(predictions))
-    print(predictions.take(2))
-    
+    #print(predictions.take(2))
+    print(predictions.show())
     print('-----------------------------------------------')
 
     # testData = ratings.map(lambda p: (p.user, p.product))
