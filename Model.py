@@ -11,7 +11,6 @@ from pyspark.sql import Row
 def format(df):
     df = df.select('userId',"trackId","count") 
     return df.rdd
-
 #%% Main
 
 def main(spark, sc):
@@ -38,9 +37,9 @@ def main(spark, sc):
     testdata = val.map(lambda p: (p[0], p[1]))
     print(testdata.take(5))
     print('-----------------------------------------------')
-    predictions = model.recommendProducts(1003178, 10)
+    predictions = model.recommendProductsForUsers(10).map(lambda r: ((r[0], r[1]), r[2]))
     print(predictions)
-    #print(predictions.take(5)).map(lambda r: ((r[0], r[1]), r[2]))
+    
     print('-----------------------------------------------')
 
     # testData = ratings.map(lambda p: (p.user, p.product))
