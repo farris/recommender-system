@@ -83,7 +83,7 @@ def main(spark, sc):
     ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
     ground_truth.show()
     print('-----------------------------------------------')
-    k = ground_truth.join(userSubsetRecs,ground_truth.userId == userSubsetRecs.userId,"inner")
+    k = ground_truth.join(userSubsetRecs,"userId")
     k.show()
     k = k.rdd
     print(k.take(1))
