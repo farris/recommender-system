@@ -56,7 +56,8 @@ def main(spark, sc):
 
     #error########################################################
     predictions = model.transform(test)
-    print(type(predictions))
+    predictions = predictions.rdd
+    print(predictions.take(5))
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
     #                             predictionCol="prediction")
     # MAP = evaluator.evaluate(predictions)
