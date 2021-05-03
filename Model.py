@@ -7,7 +7,7 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
-
+from pyspark.sql.functions import explode
 def format(df):
     df = df.select('userId',"trackId","count") 
     return df
@@ -76,7 +76,7 @@ def main(spark, sc):
     userSubsetRecs.printSchema()
     userSubsetRecs.select("userId", "recommendations.trackId").show()
     userSubsetRecs.select("recommendations.trackId").show()
-    userSubsetRecs.withColumn("recommendations.trackId", explode(userSubsetRecs.recommendations.trackId)).show()
+    #userSubsetRecs.withColumn("recommendations.trackId", explode(userSubsetRecs.recommendations.trackId)).show()
     
     
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
