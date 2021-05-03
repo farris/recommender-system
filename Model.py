@@ -29,10 +29,10 @@ def main(spark, sc):
                  'hdfs:/user/zm2114/cf_validation.parquet',
                  'hdfs:/user/zm2114/cf_test.parquet']
 
-    # train = format(spark.read.parquet(file_path[0]))   
-    # val = format(spark.read.parquet(file_path[1]))
-    # test = format(spark.read.parquet(file_path[2]))
+    train = format(spark.read.parquet(file_path[0]))   
+    val = format(spark.read.parquet(file_path[1]))
     test = format(spark.read.parquet(file_path[2]))
+    
     
     # model = ALS.trainImplicit(train, rank = 3, iterations=2, \
     #                         lambda_=0.01, blocks=-1, alpha=0.01,
@@ -52,15 +52,17 @@ def main(spark, sc):
     # 
     # %%                           
     #Training#####################################################
-    als = ALS(rank = 3, maxIter=2, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
+    als = ALS(rank = 2, maxIter=1, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
                     alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
-    model = als.fit(test)
+    model = als.fit(train) ##train
     ##############################################################
 
     #error########################################################
-    predictions = model.transform(test)
-    predictions = predictions.rdd
-    print(predictions.take(5))
+    predictions = model.transform(test)  ##test
+    users = test.select(als.getUserCol()).distinct().limit(1)
+    userSubsetRecs = model.recommendForUserSubset(users, 10)
+
+
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
     #                             predictionCol="prediction")
     # MAP = evaluator.evaluate(predictions)
