@@ -5,7 +5,7 @@ from pyspark.sql.types import *
 from pyspark.sql.functions import col
 from pyspark.ml.evaluation import RegressionEvaluator 
 from pyspark.mllib.evaluation import RankingMetrics
-from pyspark.mllib.recommendation import ALS
+from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 
 def format(df):
@@ -27,34 +27,39 @@ def main(spark, sc):
                  'hdfs:/user/zm2114/cf_test.parquet']
 
     train = format(spark.read.parquet(file_path[0]))   
-    val = format(spark.read.parquet(file_path[1])) 
+    val = spark.read.parquet(file_path[1])
     test = format(spark.read.parquet(file_path[2]))
     
-    model = ALS.trainImplicit(train, rank = 3, iterations=2, \
-                            lambda_=0.01, blocks=-1, alpha=0.01,
-                                nonnegative=False, seed=None)
+    # model = ALS.trainImplicit(train, rank = 3, iterations=2, \
+    #                         lambda_=0.01, blocks=-1, alpha=0.01,
+    #                             nonnegative=False, seed=None)
 
-    testdata = val.map(lambda p: (p[0], p[1]))
-    print(testdata.take(5))
-    print('-----------------------------------------------')
-    predictions = model.recommendProducts(1003178, 5)
-    predictions = predictions.rdd
-    print('-----------------------------------------------')
+    # testdata = val.map(lambda p: (p[0], p[1]))
+    # print(testdata.take(5))
+    # print('-----------------------------------------------')
+    # predictions = model.recommendProducts(1003178, 5)
+    # predictions = predictions.rdd
+    # print('-----------------------------------------------')
 
     # testData = ratings.map(lambda p: (p.user, p.product))
-    # predictions = model.predictAll(testData).map(lambda r: ((r.user, r.product), r.rating))                            
-    # #Training#####################################################
-    # als = ALS(rank = 3, maxIter=2, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
-    #                 alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
-    # model = als.fit(val)
-    # ##############################################################
+    # predictions = model.predictAll(testData).map(lambda r: ((r.user, r.product), r.rating)) 
+    # 
+    # 
+    # 
+    # %%                           
+    #Training#####################################################
+    als = ALS(rank = 3, maxIter=2, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
+                    alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+    model = als.fit(test)
+    ##############################################################
 
-    # #error########################################################
-    # predictions = model.transform(test)
+    #error########################################################
+    predictions = model.transform(test)
+    print(type(predictions))
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
     #                             predictionCol="prediction")
     # MAP = evaluator.evaluate(predictions)
-    # ##############################################################
+    ##############################################################
 
     # print('-----------------------------------------------')
     # print('-----------------------------------------------')
