@@ -38,7 +38,7 @@ def main(spark, sc):
     print(testdata.take(5))
     print('-----------------------------------------------')
     predictions = model.recommendProducts(1003178, 5)
-    print(predictions)
+    predictions = predictions.rdd
     print('-----------------------------------------------')
 
     # testData = ratings.map(lambda p: (p.user, p.product))
