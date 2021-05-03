@@ -80,10 +80,11 @@ def main(spark, sc):
     #userSubsetRecs.withColumn("recommendations.trackId", explode(userSubsetRecs.recommendations.trackId)).show()
     
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
-    ground_truth = ground_truth.groupby('userId')['trackId'].apply(list)
+    ground_truth =  ground_truth.groupBy("userId").agg(collect_list("trackId"))
     
     ground_truth.show() ## user_id _trackid _counts 
     
+
 
      
     #userSubsetRecs = userSubsetRecs.rdd
