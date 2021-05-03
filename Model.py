@@ -8,9 +8,12 @@ from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 
+# def format(df):
+#     df = df.select('userId',"trackId","count") 
+#     return df.rdd
 def format(df):
     df = df.select('userId',"trackId","count") 
-    return df.rdd
+    return df
 #%% Main
 
 def main(spark, sc):
