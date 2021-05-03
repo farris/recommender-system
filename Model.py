@@ -57,7 +57,7 @@ def main(spark, sc):
     print('----------------')      
     #Training#####################################################
     als = ALS(rank = 2, maxIter=1, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
-                    alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+                alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
 
     model = als.fit(train) ##train
     print('training complete')  
@@ -66,11 +66,11 @@ def main(spark, sc):
 
     #error########################################################
     predictions = model.transform(test)  ##test
-    users = test.select(als.getUserCol()).distinct().limit(1)
+    users = test.select(als.getUserCol()).distinct().limit(2)
     userSubsetRecs = model.recommendForUserSubset(users, 10)
     
     print(userSubsetRecs)
-    print(userSubsetRecs.show())  
+    print(userSubsetRecs.show(truncate = False))  
 
 
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
