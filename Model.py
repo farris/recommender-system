@@ -8,9 +8,9 @@ from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 
-# def format(df):
-#     df = df.select('userId',"trackId","count") 
-#     return df.rdd
+def format(df):
+    df = df.select('userId',"trackId","count") 
+    return df
 
 #%% Main
 
@@ -50,9 +50,9 @@ def main(spark, sc):
     # 
     # %%                       
     # 
-    train = spark.read.parquet(file_path[0])
-    val = spark.read.parquet(file_path[1])
-    test = spark.read.parquet(file_path[2])
+    train = format(spark.read.parquet(file_path[0]))   
+    val = format(spark.read.parquet(file_path[1]))
+    test = format(spark.read.parquet(file_path[2]))
     print('read in data')  
     print('----------------')      
     #Training#####################################################
@@ -72,13 +72,14 @@ def main(spark, sc):
     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
     userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 20) ## make reccs for a given user
-
+    print(userSubsetRecs.show(truncate = False)) 
+    
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
     ground_truth.show()
     
 
-    print(userSubsetRecs.show(truncate = False))  
-    userSubsetRecs = userSubsetRecs.rdd
+     
+    #userSubsetRecs = userSubsetRecs.rdd
 
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
     #                             predictionCol="prediction")
