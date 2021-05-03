@@ -73,7 +73,7 @@ def main(spark, sc):
     
     userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 20) ## make reccs for a given user
     print(userSubsetRecs.show(truncate = False)) 
-    print(userSubsetRecs.select("recommendations.element.*").show())
+    print(userSubsetRecs.select("recommendations.*").show())
 
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
     ground_truth.show()
