@@ -26,9 +26,10 @@ def main(spark, sc):
                  'hdfs:/user/zm2114/cf_validation.parquet',
                  'hdfs:/user/zm2114/cf_test.parquet']
 
-    train = format(spark.read.parquet(file_path[0]))   
-    val = spark.read.parquet(file_path[1])
-    test = format(spark.read.parquet(file_path[2]))
+    # train = format(spark.read.parquet(file_path[0]))   
+    # val = format(spark.read.parquet(file_path[1]))
+    # test = format(spark.read.parquet(file_path[2]))
+    test = spark.read.parquet(file_path[2])
     
     # model = ALS.trainImplicit(train, rank = 3, iterations=2, \
     #                         lambda_=0.01, blocks=-1, alpha=0.01,
