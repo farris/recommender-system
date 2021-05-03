@@ -76,6 +76,7 @@ def main(spark, sc):
     userSubsetRecs.printSchema()
     userSubsetRecs.select("userId", "recommendations.trackId").show()
     userSubsetRecs.select("recommendations.trackId").show()
+    userSubsetRecs.withColumn("recommendations.trackId", explode(userSubsetRecs.recommendations.trackId)).show()
     
     
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
