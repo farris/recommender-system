@@ -2,12 +2,13 @@
 from pyspark.sql import SparkSession
 from pyspark import SparkContext,  SparkConf
 from pyspark.sql.types import *
-from pyspark.sql.functions import col
+from pyspark.sql import functions as F
 from pyspark.ml.evaluation import RegressionEvaluator 
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 from pyspark.sql.functions import explode
+#%%
 def format(df):
     df = df.select('userId',"trackId","count") 
     return df
@@ -80,7 +81,7 @@ def main(spark, sc):
     #userSubsetRecs.withColumn("recommendations.trackId", explode(userSubsetRecs.recommendations.trackId)).show()
     
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
-    ground_truth =  ground_truth.groupBy("userId").agg(collect_list("trackId"))
+    ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
     
     ground_truth.show() ## user_id _trackid _counts 
     
