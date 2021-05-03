@@ -69,36 +69,41 @@ def main(spark, sc):
     predictions = model.transform(test)  ##test & make predictions
     
 
-    user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
+#     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
-    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 10) ## make reccs for a given user
-                                                                            ##0 - i
+#     userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 10) ## make reccs for a given user
+#                                                                             ##0 - i
 
-    userSubsetRecs.printSchema()
-    userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId") ##unpack nested recc structure
-    print("Showing userSubsetRecs")
-    userSubsetRecs.show()
+#     userSubsetRecs.printSchema()
+#     userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId") ##unpack nested recc structure
+#     print("Showing userSubsetRecs")
+#     userSubsetRecs.show()
     
-    print('-----------------------------------------------')
-    ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
-    ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
-    print("Showing ground truth")
-    ground_truth.show()
+#     print('-----------------------------------------------')
+#     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
+#     ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
+#     print("Showing ground truth")
+#     ground_truth.show()
     
     
-    print('-----------------------------------------------')
-    k = userSubsetRecs.join(ground_truth,"userId")
-    print("Joined table of preds and labels")
-    k.show()
+#     print('-----------------------------------------------')
+#     k = userSubsetRecs.join(ground_truth,"userId")
+#     print("Joined table of preds and labels")
+#     k.show()
     
-    print("RDD for joined table")
-    k = k.select('collect_list(trackId)',"trackId").rdd
-    print(k.take(1))
+#     print("RDD for joined table")
+#     k = k.select('collect_list(trackId)',"trackId").rdd
+#     print(k.take(1))
     
-    print("-------------------- MAP ------------------------")
-    metrics = RankingMetrics(k)
+#     print("-------------------- MAP ------------------------")
+#     metrics = RankingMetrics(k)
     
-    print(metrics.meanAveragePrecision)
+#     print(metrics.meanAveragePrecision)
+
+
+
+    test.orderBy(F.desc('userId'), F.desc('count')).show(40)
+    
      
     #userSubsetRecs = userSubsetRecs.rdd
 
