@@ -75,18 +75,15 @@ def main(spark, sc):
                                                                             ##0 - i
 
     userSubsetRecs.printSchema()
-    userSubsetRecs = userSubsetRecs.select("userId", "recommendations.trackId") ##unpack nested recc structure
+    userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId") ##unpack nested recc structure
     userSubsetRecs.show()
-    userSubsetRecs = userSubsetRecs.select("recommendations.trackId")
-    userSubsetRecs.show()
-    userSubsetRecs.rdd.flatMap(lambda x:x)
-    print(userSubsetRecs.take(3))
+    
     print('-----------------------------------------------')
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
     ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
     ground_truth.show()
     print('-----------------------------------------------')
-    
+    ground_truth.join(userSubsetRecs,ground_truth.userId == userSubsetRecs.userId,"outer")
 
 
    
