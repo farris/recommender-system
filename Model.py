@@ -66,12 +66,13 @@ def main(spark, sc):
 
     #error########################################################
     predictions = model.transform(test)  ##test
+    print(list(test.select(als.getUserCol()).distinct()))
     users = test.select(als.getUserCol()).distinct().limit(2)
     userSubsetRecs = model.recommendForUserSubset(users, 10)
     
     print(userSubsetRecs)
     print(userSubsetRecs.show(truncate = False))  
-
+    userSubsetRecs = userSubsetRecs.rdd
 
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
     #                             predictionCol="prediction")
