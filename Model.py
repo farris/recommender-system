@@ -71,9 +71,9 @@ def main(spark, sc):
 
     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
-    test.select(F.col("userId")).filter(F.col("userId").isin(user_list[0:2])).show()
-
-    userSubsetRecs = model.recommendForUserSubset( test.select(F.col("userId")).filter(F.col("userId").isin(user_list[0:2])), 2) ## make reccs for a given user
+    #test.select(F.col("userId")).filter(F.col("userId").isin(user_list[0:2])).show()
+    print(user_list[0:2])
+    userSubsetRecs = model.recommendForUserSubset(user_list[0:2], 2) ## make reccs for a given user
                                                                             ##0 - i
 
     userSubsetRecs.printSchema()
