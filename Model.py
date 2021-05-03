@@ -88,16 +88,19 @@ def main(spark, sc):
     k = k.select('collect_list(trackId)',"trackId").rdd
     print(k.take(1))
     
-    temp = k.map(lambda x: x[0], x[1])
-    print(temp.take(1))
-    
-    
     print("-------------------- MAP ------------------------")
     metrics = RankingMetrics(k)
     
     print(metrics.meanAveragePrecision)
+    
 
-
+    temp = k.map(lambda x: (x[0], x[1]))
+    print(temp.take(1))
+    
+    print("-------------------- temp MAP ------------------------")
+    metrics = RankingMetrics(temp)
+    
+    print(metrics.meanAveragePrecision)
      
     #userSubsetRecs = userSubsetRecs.rdd
 
