@@ -68,21 +68,20 @@ def main(spark, sc):
     #error########################################################
     predictions = model.transform(test)  ##test & make predictions
     
-    #users = test.select(als.getUserCol()).distinct().limit(2)
-   # users_df = test.select(als.getUserCol()).distinct()
+
     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
-    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 3) ## make reccs for a given user
+    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 2) ## make reccs for a given user
                                                                             ##0 - i
 
     userSubsetRecs.printSchema()
     userSubsetRecs = userSubsetRecs.select("userId", "recommendations.trackId") ##unpack nested recc structure
-
-
+    userSubsetRecs.show()
+    print('-----------------------------------------------')
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
     ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
-
-
+    ground_truth.show()
+    print('-----------------------------------------------')
     (userSubsetRecs.join(ground_truth,userSubsetRecs.userID == ground_truth.userID ,"inner")).show()
 
 
