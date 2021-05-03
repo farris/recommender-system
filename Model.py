@@ -11,9 +11,7 @@ from pyspark.sql import Row
 # def format(df):
 #     df = df.select('userId',"trackId","count") 
 #     return df.rdd
-def format(df):
-    df = df.select('userId',"trackId","count") 
-    return df
+
 #%% Main
 
 def main(spark, sc):
@@ -29,9 +27,9 @@ def main(spark, sc):
                  'hdfs:/user/zm2114/cf_validation.parquet',
                  'hdfs:/user/zm2114/cf_test.parquet']
 
-    train = format(spark.read.parquet(file_path[0]))   
-    val = format(spark.read.parquet(file_path[1]))
-    test = format(spark.read.parquet(file_path[2]))
+    # train = format(spark.read.parquet(file_path[0]))   
+    # val = format(spark.read.parquet(file_path[1]))
+    # test = format(spark.read.parquet(file_path[2]))
     
     
     # model = ALS.trainImplicit(train, rank = 3, iterations=2, \
@@ -50,17 +48,29 @@ def main(spark, sc):
     # 
     # 
     # 
-    # %%                           
+    # %%                       
+    # 
+    train = spark.read.parquet(file_path[0])
+    val = spark.read.parquet(file_path[1])
+    test = spark.read.parquet(file_path[2])
+    print('read in data')  
+    print('----------------')      
     #Training#####################################################
     als = ALS(rank = 2, maxIter=1, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
                     alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+
     model = als.fit(train) ##train
+    print('training complete')  
+    print('----------------')   
     ##############################################################
 
     #error########################################################
     predictions = model.transform(test)  ##test
     users = test.select(als.getUserCol()).distinct().limit(1)
     userSubsetRecs = model.recommendForUserSubset(users, 10)
+    
+    print(userSubsetRecs)
+    print(userSubsetRecs.show())  
 
 
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
