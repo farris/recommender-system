@@ -38,7 +38,7 @@ def main(spark, sc):
     testdata = val.map(lambda p: (p[0], p[1]))
     print(testdata.take(5))
     print('-----------------------------------------------')
-    predictions = model.recommendProducts(100317, 10)
+    predictions = model.recommendProducts(1003178, 10)
     print(predictions.take(5))
     print('-----------------------------------------------')
 
