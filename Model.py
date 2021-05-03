@@ -72,8 +72,10 @@ def main(spark, sc):
     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
     userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 20) ## make reccs for a given user
-    print(userSubsetRecs.show(truncate = False)) 
-    print(userSubsetRecs.select(col('recommendations')).show())
+    
+    user_reccs = userSubsetRecs.select(col('recommendations'))
+    user_reccs = user_reccs.rdd
+    print(user_reccs.take(5))
 
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
     ground_truth.show()
