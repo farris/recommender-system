@@ -65,15 +65,16 @@ def main(spark, sc):
     ##############################################################
 
     #error########################################################
-    predictions = model.transform(test)  ##test
+    predictions = model.transform(test)  ##test & make predictions
     
     #users = test.select(als.getUserCol()).distinct().limit(2)
    # users_df = test.select(als.getUserCol()).distinct()
-    user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]
+    user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
-    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 10)
+    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0:10]), 10) ## make reccs for a given user
+
     
-    
+
     print(userSubsetRecs.show(truncate = False))  
     userSubsetRecs = userSubsetRecs.rdd
 
