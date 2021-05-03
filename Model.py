@@ -71,7 +71,7 @@ def main(spark, sc):
    # users_df = test.select(als.getUserCol()).distinct()
     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]
     
-    userSubsetRecs = model.recommendForUserSubset(test.where(test.user == user_list[0]), 10)
+    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 10)
     
     
     print(userSubsetRecs.show(truncate = False))  
