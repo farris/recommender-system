@@ -88,9 +88,9 @@ def main(spark, sc):
     k = k.select('collect_list(trackId)',"trackId").rdd
     print(k.take(1))
 
-
-   
+    metrics = RankingMetrics(k)
     
+    print(metrics.meanAveragePrecision)
 
 
      
