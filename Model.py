@@ -6,7 +6,7 @@ from pyspark.sql.functions import col
 from pyspark.ml.evaluation import RegressionEvaluator 
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
-from pyspark.sql import row
+from pyspark.sql import Row
 
 # def format(df):
 #     df = df.select('userId',"trackId","count") 
