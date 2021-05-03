@@ -36,10 +36,10 @@ def main(spark, sc):
                                 nonnegative=False, seed=None)
 
     testdata = val.map(lambda p: (p[0], p[1]))
-    print(testdata.show())
+    print(testdata.take(5))
     print('-----------------------------------------------')
     predictions = model.predictAll(testdata).map(lambda r: ((r[0], r[1]), r[2]))
-    print(predicitions.show())
+    print(predicitions.take5)
     print('-----------------------------------------------')
 
     # testData = ratings.map(lambda p: (p.user, p.product))
