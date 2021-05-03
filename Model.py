@@ -71,34 +71,32 @@ def main(spark, sc):
 
     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
     
-    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 3) ## make reccs for a given user
+    userSubsetRecs = model.recommendForUserSubset(test.where(test.userId == user_list[0]), 10) ## make reccs for a given user
                                                                             ##0 - i
 
     userSubsetRecs.printSchema()
     userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId") ##unpack nested recc structure
+    print("Showing userSubsetRecs")
     userSubsetRecs.show()
     
     print('-----------------------------------------------')
     ground_truth = test.where(test.userId == user_list[0]).orderBy('count', ascending=False)
     ground_truth =  ground_truth.groupBy("userId").agg(F.collect_list("trackId"))
+    print("Showing ground truth")
     ground_truth.show()
+    
+    
     print('-----------------------------------------------')
-    k = ground_truth.join(userSubsetRecs,"userId")
+    k = userSubsetRecs.join(ground_truth,"userId")
+    print("Joined table of preds and labels")
     k.show()
+    
+    print("RDD for joined table")
     k = k.select('collect_list(trackId)',"trackId").rdd
     print(k.take(1))
     
     print("-------------------- MAP ------------------------")
     metrics = RankingMetrics(k)
-    
-    print(metrics.meanAveragePrecision)
-    
-
-    temp = k.map(lambda x: (x[0], x[1]))
-    print(temp.take(1))
-    
-    print("-------------------- temp MAP ------------------------")
-    metrics = RankingMetrics(temp)
     
     print(metrics.meanAveragePrecision)
      
