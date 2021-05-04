@@ -7,7 +7,7 @@ from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
-
+import itertools
 #%%
 def format(df):
     df = df.select('userId',"trackId","count") 
@@ -39,35 +39,46 @@ def main(spark, sc):
     
     # -------------------- Running full model. - This ran successfully -------------------------
     # ------------------------------ 10 Recs for each user -------------------------------------
+    #            alpha          regParam             maxIter
+    params = [ [0.1, 0.99],    [0.001, 0.01],        [1, 2]         ] 
+    params = list(itertools.product(*params))
+    params = params[0:2]
+    precision = []
+    for i in params:
+        
+        als = ALS(rank = 2, maxIter=i[2],regParam=i[1],userCol="userId", itemCol="trackId", ratingCol="count",
+                    alpha = i[0], implicitPrefs = True,coldStartStrategy="drop")
 
-    als = ALS(rank = 2, maxIter=1, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
-                alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+        model = als.fit(train) ##train
+        print('training complete')  
+        print('----------------')   
+        ##############################################################
 
-    model = als.fit(train) ##train
-    print('training complete')  
-    print('----------------')   
-    ##############################################################
+        #error########################################################
+        users = test.select(als.getUserCol()).distinct()
+        userSubsetRecs = model.recommendForUserSubset(users, 5)
+        userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
 
-    #error########################################################
-    users = test.select(als.getUserCol()).distinct()
-    userSubsetRecs = model.recommendForUserSubset(users, 10)
-    userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
-    print("Showing userSubsetRecs")
-    userSubsetRecs.show()
-    
-    test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
-    test.show()
-    
-    
-    k = userSubsetRecs.join(test,"userId")
-    k = k.select('trackId_preds',"trackId").rdd
-    
-    print("-------------------- MAP ------------------------")
-    metrics = RankingMetrics(k)
-    
-    print(metrics.meanAveragePrecision)
+        
+        test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
+
+        
+        
+        k = userSubsetRecs.join(test,"userId")
+        k = k.select('trackId_preds',"trackId").rdd
+        
+        print("-------------------- MAP ------------------------")
+        metrics = RankingMetrics(k)
+        
+        precision.append(metrics.meanAveragePrecision)
   
-
+    for i in range(len(params)):
+        print(params[i])
+        print("alpha= " + str(params[i][0]))
+        print("regParam= " + str(params[i][1]))
+        print("maxIter= " + str(params[i][2]))
+        print("PRECISION= " + str(precision[i]))
+        print('-----------------------------------------------------')
 
     
 #%% Func call
