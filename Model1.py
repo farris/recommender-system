@@ -42,7 +42,7 @@ def main(spark, sc):
     #            alpha          regParam             maxIter
     params = [ [0.1, 0.99],    [0.001, 0.01],        [1, 2]         ] 
     params = list(itertools.product(*params))
-    params = params[0:2]
+    #params = params[0:2]
     precision = []
     for i in params:
         
