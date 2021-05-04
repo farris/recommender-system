@@ -138,13 +138,13 @@ def main(spark, sc):
         .addGrid(als.maxIter, [1, 2]) \
         .build()
 
-    crossval = CrossValidator(estimator=als,
+    cv = CrossValidator(estimator=als,
                           estimatorParamMaps=paramGrid,
                           evaluator=RankingMetrics(),
                           numFolds=2)  # use 3+ folds in practice
 
     # Run cross-validation, and choose the best set of parameters.
-    cvModel = crossval.fit(training)
+    cvModel = cv.fit(training)
     print('training complete')
     
 #%% Func call
