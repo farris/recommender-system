@@ -44,6 +44,8 @@ def main(spark, sc):
     params = list(itertools.product(*params))
     #params = params[0:2]
     precision = []
+
+    val1 = val.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
     for i in params:
         
         als = ALS(rank = 2, maxIter=i[2],regParam=i[1],userCol="userId", itemCol="trackId", ratingCol="count",
@@ -55,16 +57,12 @@ def main(spark, sc):
         ##############################################################
 
         ##############################################################
-        users = test.select(als.getUserCol()).distinct()
+        users = val.select(als.getUserCol()).distinct()
         userSubsetRecs = model.recommendForUserSubset(users, 5)
         userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
-        userSubsetRecs.show()
         
-        test1 = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
-        test1.show()
-        
-        
-        k = userSubsetRecs.join(test1,"userId")
+    
+        k = userSubsetRecs.join(val1,"userId")
         k = k.select('trackId_preds',"trackId").rdd
         
         print("-------------------- MAP ------------------------")
