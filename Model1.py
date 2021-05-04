@@ -50,7 +50,7 @@ def main(spark, sc):
 
     for i in params:
         
-        als = ALS(rank = i[4], maxIter=i[2],regParam=i[1],userCol="userId", itemCol="trackId", ratingCol="count",
+        als = ALS(rank = i[3], maxIter=i[2],regParam=i[1],userCol="userId", itemCol="trackId", ratingCol="count",
                     alpha = i[0], implicitPrefs = True,coldStartStrategy="drop")
 
         model = als.fit(train) ##train
