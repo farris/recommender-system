@@ -129,7 +129,7 @@ def main(spark, sc):
 
     # Grid searching
     
-    als = ALS(userCol="userId", itemCol="trackId", ratingCol="count", implicitPrefs = True, coldStartStrategy="drop"
+    als = ALS(userCol="userId", itemCol="trackId", ratingCol="count", implicitPrefs = True, coldStartStrategy="drop",
               rank = 2)
     
     paramGrid = ParamGridBuilder() \
@@ -142,7 +142,9 @@ def main(spark, sc):
                           estimatorParamMaps=paramGrid,
                           evaluator=RankingMetrics(),
                           numFolds=2)  # use 3+ folds in practice
-
+    
+    print("Cross Validation complete")
+    
     # Run cross-validation, and choose the best set of parameters.
     cvModel = cv.fit(training)
     print('training complete')
