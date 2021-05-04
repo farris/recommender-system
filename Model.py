@@ -107,19 +107,21 @@ def main(spark, sc):
     
     users = test.select(als.getUserCol()).distinct()
     userSubsetRecs = model.recommendForUserSubset(users, 10)
+    userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
+    print("Showing userSubsetRecs")
     userSubsetRecs.show()
     
-    test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
-    test.show()
+#     test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
+#     test.show()
     
     
-    k = userSubsetRecs.join(test,"userId")
-    k = k.select('trackId_preds',"trackId").rdd
+#     k = userSubsetRecs.join(test,"userId")
+#     k = k.select('trackId_preds',"trackId").rdd
     
-    print("-------------------- MAP ------------------------")
-    metrics = RankingMetrics(k)
+#     print("-------------------- MAP ------------------------")
+#     metrics = RankingMetrics(k)
     
-    print(metrics.meanAveragePrecision)
+#     print(metrics.meanAveragePrecision)
 
 
 
