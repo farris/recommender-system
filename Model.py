@@ -105,14 +105,24 @@ def main(spark, sc):
 #     test.orderBy(F.desc('userId'), F.desc('count')).show(40)
     
     
-#     users = test.select(als.getUserCol()).distinct().limit(10)
-#     userSubsetRecs = model.recommendForUserSubset(users, 10)
-#     userSubsetRecs.show()
+    users = test.select(als.getUserCol()).distinct()
+    userSubsetRecs = model.recommendForUserSubset(users, 10)
+    userSubsetRecs.show()
     
-    
-    test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId"))
+    test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
     test.show()
-     
+    
+    
+    k = userSubsetRecs.join(test,"userId")
+    k = k.select('trackId_preds',"trackId").rdd
+    
+    print("-------------------- MAP ------------------------")
+    metrics = RankingMetrics(k)
+    
+    print(metrics.meanAveragePrecision)
+
+
+
     #userSubsetRecs = userSubsetRecs.rdd
 
     # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
@@ -133,9 +143,9 @@ def main(spark, sc):
     # print('-----------------------------------------------')
     # print('Generate top 10 movie recommendations for a specified set of users')
     # print('-----------------------------------------------')
-    users = test.select(als.getUserCol()).distinct().limit(3)
-    userSubsetRecs = model.recommendForUserSubset(users, 10)
-    userSubsetRecs.show(truncate=False)
+    # users = test.select(als.getUserCol()).distinct().limit(3)
+    # userSubsetRecs = model.recommendForUserSubset(users, 10)
+    # userSubsetRecs.show(truncate=False)
     # print('-----------------------------------------------')
     # print('Generate top 10 user recommendations for a specified set of movies')
     # print('-----------------------------------------------') 
