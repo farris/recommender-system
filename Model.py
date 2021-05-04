@@ -2,12 +2,12 @@
 from pyspark.sql import SparkSession
 from pyspark import SparkContext,  SparkConf
 from pyspark.sql.types import *
-from pyspark.sql import functions as F
-from pyspark.ml.evaluation import RegressionEvaluator 
+from pyspark.sql import functions as F 
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
-from pyspark.sql.functions import explode
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
+
 #%%
 def format(df):
     df = df.select('userId',"trackId","count") 
@@ -57,16 +57,16 @@ def main(spark, sc):
     print('read in data')  
     print('----------------')      
     #Training#####################################################
-    als = ALS(rank = 2, maxIter=1, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
-                alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
+#     als = ALS(rank = 2, maxIter=1, regParam=.001,userCol="userId", itemCol="trackId", ratingCol="count",
+#                 alpha = .99, implicitPrefs = True,coldStartStrategy="drop")
 
-    model = als.fit(train) ##train
-    print('training complete')  
-    print('----------------')   
+#     model = als.fit(train) ##train
+#     print('training complete')  
+#     print('----------------')   
     ##############################################################
 
     #error########################################################
-    predictions = model.transform(test)  ##test & make predictions
+#     predictions = model.transform(test)  ##test & make predictions
     
 
 #     user_list = [row['userId'] for row in test.select(als.getUserCol()).distinct().collect()]  ##get list of users
@@ -103,65 +103,54 @@ def main(spark, sc):
 
     # Ordering by multiple columns. - This works
 #     test.orderBy(F.desc('userId'), F.desc('count')).show(40)
-    
-    
-    users = test.select(als.getUserCol()).distinct()
-    userSubsetRecs = model.recommendForUserSubset(users, 10)
-    userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
-    print("Showing userSubsetRecs")
-    userSubsetRecs.show()
-    
-    test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
-    test.show()
-    
-    
-    k = userSubsetRecs.join(test,"userId")
-    k = k.select('trackId_preds',"trackId").rdd
-    
-    print("-------------------- MAP ------------------------")
-    metrics = RankingMetrics(k)
-    
-    print(metrics.meanAveragePrecision)
 
-
-
-    #userSubsetRecs = userSubsetRecs.rdd
-
-    # evaluator = pyspark.ml.evaluation.RankingEvaluator(metricName="meanAveragePrecision", labelCol="count",
-    #                             predictionCol="prediction")
-    # MAP = evaluator.evaluate(predictions)
-    ##############################################################
-
-    # print('-----------------------------------------------')
-    # print('-----------------------------------------------')
-    # print("MAP = " + str(MAP))
-    # print('-----------------------------------------------')
-    # print('-----------------------------------------------')
+#-------------------------------------------------------------------------------------    
     
-    # print('')
-    # print('')
-    # print('')
-
-    # print('-----------------------------------------------')
-    # print('Generate top 10 movie recommendations for a specified set of users')
-    # print('-----------------------------------------------')
-    # users = test.select(als.getUserCol()).distinct().limit(3)
-    # userSubsetRecs = model.recommendForUserSubset(users, 10)
-    # userSubsetRecs.show(truncate=False)
-    # print('-----------------------------------------------')
-    # print('Generate top 10 user recommendations for a specified set of movies')
-    # print('-----------------------------------------------') 
-    # movies = test.select(als.getItemCol()).distinct().limit(3)
-    # movieSubSetRecs = model.recommendForItemSubset(movies, 10)
-    # movieSubSetRecs.show(truncate=False)
+    # -------------------- Running full model. - This ran successfully -------------------------
+    # ------------------------------ 10 Recs for each user -------------------------------------
+#     users = test.select(als.getUserCol()).distinct()
+#     userSubsetRecs = model.recommendForUserSubset(users, 10)
+#     userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
+#     print("Showing userSubsetRecs")
+#     userSubsetRecs.show()
+    
+#     test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
+#     test.show()
     
     
+#     k = userSubsetRecs.join(test,"userId")
+#     k = k.select('trackId_preds',"trackId").rdd
+    
+#     print("-------------------- MAP ------------------------")
+#     metrics = RankingMetrics(k)
+    
+#     print(metrics.meanAveragePrecision)
   
+
+    # Grid searching
+    
+    als = ALS(userCol="userId", itemCol="trackId", ratingCol="count", implicitPrefs = True, coldStartStrategy="drop"
+              rank = 2)
+    
+    paramGrid = ParamGridBuilder() \
+        .addGrid(als.alpha, [0.1, 0.99]) \
+        .addGrid(als.regParam, [0.001, 0.01]) \
+        .addGrid(als.maxIter, [1, 2]) \
+        .build()
+
+    crossval = CrossValidator(estimator=als,
+                          estimatorParamMaps=paramGrid,
+                          evaluator=RankingMetrics(),
+                          numFolds=2)  # use 3+ folds in practice
+
+    # Run cross-validation, and choose the best set of parameters.
+    cvModel = crossval.fit(training)
+    print('training complete')
     
 #%% Func call
 if __name__ == "__main__":
 
     # Create the spark session object
-    spark = SparkSession.builder.appName('Test').getOrCreate()
+    spark = SparkSession.builder.appName('Model').getOrCreate()
     sc = spark.sparkContext
     main(spark, sc)
