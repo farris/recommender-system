@@ -58,13 +58,13 @@ def main(spark, sc):
         users = test.select(als.getUserCol()).distinct()
         userSubsetRecs = model.recommendForUserSubset(users, 5)
         userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
-
+        userSubsetRecs.show()
         
-        test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
-
+        test1 = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
+        test1.show()
         
         
-        k = userSubsetRecs.join(test,"userId")
+        k = userSubsetRecs.join(test1,"userId")
         k = k.select('trackId_preds',"trackId").rdd
         
         print("-------------------- MAP ------------------------")
