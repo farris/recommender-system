@@ -111,17 +111,17 @@ def main(spark, sc):
     print("Showing userSubsetRecs")
     userSubsetRecs.show()
     
-#     test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
-#     test.show()
+    test = test.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
+    test.show()
     
     
-#     k = userSubsetRecs.join(test,"userId")
-#     k = k.select('trackId_preds',"trackId").rdd
+    k = userSubsetRecs.join(test,"userId")
+    k = k.select('trackId_preds',"trackId").rdd
     
-#     print("-------------------- MAP ------------------------")
-#     metrics = RankingMetrics(k)
+    print("-------------------- MAP ------------------------")
+    metrics = RankingMetrics(k)
     
-#     print(metrics.meanAveragePrecision)
+    print(metrics.meanAveragePrecision)
 
 
 
