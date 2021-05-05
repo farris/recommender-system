@@ -32,8 +32,7 @@ def main(spark, sc):
     train = format(spark.read.parquet(file_path[0]))   
     val = format(spark.read.parquet(file_path[1]))
     test = format(spark.read.parquet(file_path[2]))
-    print('read in data')  
-    print('----------------')      
+    
 
 
 #-------------------------------------------------------------------------------------    
@@ -53,9 +52,7 @@ def main(spark, sc):
         als = ALS(rank = i[3], maxIter=i[2],regParam=i[1],userCol="userId", itemCol="trackId", ratingCol="count",
                     alpha = i[0], implicitPrefs = True,coldStartStrategy="drop")
 
-        model = als.fit(train) ##train
-        print('training complete')  
-        print('----------------')   
+        model = als.fit(train) ##train   
         ##############################################################
 
         ##############################################################
@@ -82,7 +79,7 @@ def main(spark, sc):
     
     print('BEST----------------------------------------------------')
     idx_max = np.argmax(precision)
-    best_params = params(idx_max)
+    best_params = params[idx_max]
     print("alpha= " + str(best_params[0]))
     print("regParam= " + str(best_params[1]))
     print("maxIter= " + str(best_params[2]))
