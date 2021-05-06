@@ -40,7 +40,7 @@ def main(spark, sc):
     # -------------------- Running full model. - This ran successfully -------------------------
     # ------------------------------ 10 Recs for each user -------------------------------------
     #            alpha                      regParam                                                    maxIter                   rank
-    params = [ [.01,.1,1,3,5,10],                           [.1,1,10]    ,                           [2]     ,           [2,5,10,50,100]        ] 
+    params = [ [.01,.1,1,3,5,10],                          [.1,1,10]    ,                           [2]     ,           [2,5,10,50,100]        ] 
     params = list(itertools.product(*params))
     #params = params[0:2]
     precision = []
