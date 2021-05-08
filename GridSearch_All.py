@@ -6,7 +6,6 @@ from pyspark.sql import functions as F
 from pyspark.mllib.evaluation import RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
-from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 import itertools
 import numpy as np
 #%%
@@ -31,16 +30,12 @@ def main(spark, sc):
 
     train = format(spark.read.parquet(file_path[0]))   
     val = format(spark.read.parquet(file_path[1]))
-    test = format(spark.read.parquet(file_path[2]))
-    
-
+#     test = format(spark.read.parquet(file_path[2]))
 
 #-------------------------------------------------------------------------------------    
     
-    # -------------------- Running full model. - This ran successfully -------------------------
-    # ------------------------------ 10 Recs for each user -------------------------------------
     #            alpha                      regParam                                                    maxIter                   rank
-    params = [ [0, 10, 25,50,100],                          [0, 5, 10, 25, 50, 100]    ,                           [2]     ,           [10]        ] 
+    params = [ [0, 10, 25,50,100],                          [0, 5, 10, 25, 50, 100]    ,                           [5]     ,           [50]        ] 
     params = list(itertools.product(*params))
     #params = params[0:2]
     precision = []
@@ -57,7 +52,7 @@ def main(spark, sc):
 
         ##############################################################
         users = val.select(als.getUserCol()).distinct()
-        userSubsetRecs = model.recommendForUserSubset(users, 100)
+        userSubsetRecs = model.recommendForUserSubset(users, 500)
         userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
         
     
@@ -77,15 +72,15 @@ def main(spark, sc):
         print("MAP= " + str(precision[i]))
         print('-----------------------------------------------------')
     
-    print('BEST----------------------------------------------------')
-    idx_max = np.argmax(precision)
-    best_params = params[idx_max]
-    print("alpha= " + str(best_params[0]))
-    print("regParam= " + str(best_params[1]))
-    print("maxIter= " + str(best_params[2]))
-    print("rank= " + str(best_params[3]))
-    print("MAP= " + np.max(precision))
-    print('-----------------------------------------------------')
+#     print('BEST----------------------------------------------------')
+#     idx_max = np.argmax(precision)
+#     best_params = params[idx_max]
+#     print("alpha= " + str(best_params[0]))
+#     print("regParam= " + str(best_params[1]))
+#     print("maxIter= " + str(best_params[2]))
+#     print("rank= " + str(best_params[3]))
+#     print("MAP= " + np.max(precision))
+#     print('-----------------------------------------------------')
 
     
 #%% Func call
