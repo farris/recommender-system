@@ -35,7 +35,7 @@ def main(spark, sc):
 #-------------------------------------------------------------------------------------    
     
     #            alpha                      regParam                                                    maxIter                   rank
-    params = [ [0, 10, 25,50,100],                          [0, 5, 10, 25, 50, 100]    ,                           [5]     ,           [50]        ] 
+    params = [ [120, 150, 200, 250, 300],                          [0, 2.5, 5, 7.5]    ,                           [5]     ,           [50]        ] 
     params = list(itertools.product(*params))
     #params = params[0:2]
     precision = []
