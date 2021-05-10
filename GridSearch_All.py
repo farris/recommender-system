@@ -63,7 +63,7 @@ def main(spark, sc):
     
         k = userSubsetRecs.join(val1,"userId")
         k = k.select('trackId_preds',"trackId").rdd
-        
+        print(k.take(10))
         metrics = RankingMetrics(k)
         
         precision.append(metrics.meanAveragePrecision)
