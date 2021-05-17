@@ -96,11 +96,11 @@ def main(spark, sc):
     
     # -------------------- Running full model. - This ran successfully -------------------------
     # ------------------------------ 10 Recs for each user -------------------------------------
-    # params = [ [.001,.01,1,10,100],                             #alpha
-    #         [.01,.1,1,10,50]    ,                           #regParam                            
-    #         [3]     ,                                       #maxIter 
-    #         [50,100]        ]                               #rank
-    params = [ [10],[1], [8]     ,[100]        ]
+    params = [ [.001,.01,1,10,100],                             #alpha
+            [.01,.1,1,10,50]    ,                           #regParam                            
+            [3]     ,                                       #maxIter 
+            [50,100]        ]                               #rank
+    # params = [ [10],[1], [8]     ,[100]        ]
     params = list(itertools.product(*params))
     
     precision = []
@@ -111,7 +111,7 @@ def main(spark, sc):
     # print(val1.show())
     # print('-----------------------------------------------------')
     
-    for i,z in zip(params,range(1)):
+    for i,z in zip(params,range(len(params))):
         
         als = ALS(rank = i[3], maxIter=i[2],regParam=i[1],userCol="userId", itemCol="trackId", ratingCol="count",
                     alpha = i[0], implicitPrefs = True)
