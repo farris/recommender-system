@@ -133,7 +133,8 @@ def main(spark, sc):
         
        
 
-        k = k.select('trackId_preds',"trackId").rdd
+        #k = k.select('trackId_preds',"trackId").rdd
+        k = k.rdd.map(lambda row: (row[1], row[2]))
         print('-----------------------------------------------------')
         print('Join RDD')
         print(k.take(10))
