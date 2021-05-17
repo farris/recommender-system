@@ -142,7 +142,7 @@ def main(spark, sc):
         # print('Join RDD')
         # print(k.take(10))
         # print('-----------------------------------------------------')
-        k  = sc.parallelize(k)
+        #k  = sc.parallelize(k)
         metrics = RankingMetrics(k)
         precision.append(metrics.meanAveragePrecision)
 
