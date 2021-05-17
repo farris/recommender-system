@@ -98,7 +98,7 @@ def main(spark, sc):
     # ------------------------------ 10 Recs for each user -------------------------------------
     params = [ [.001,.01,1,10,100],                             #alpha
             [.01,.1,1,10,50]    ,                           #regParam                            
-            [8]     ,                                       #maxIter 
+            [3]     ,                                       #maxIter 
             [50,100]        ]                               #rank
     params = list(itertools.product(*params))
     
