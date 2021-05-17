@@ -143,8 +143,8 @@ def main(spark, sc):
         print('-----------------------------------------------------')
  
         metrics = RankingMetrics(k)
-        
-        precision.append(sc.parallelize(metrics.meanAveragePrecision))
+        p = sc.parallelize(metrics.meanAveragePrecision)
+        precision.append(p)
 
 
         
