@@ -97,7 +97,7 @@ def main(spark, sc):
     # -------------------- Running full model. - This ran successfully -------------------------
     # ------------------------------ 10 Recs for each user -------------------------------------
     #            alpha                      regParam                                                    maxIter                   rank
-    params = [ [.1],                          [1]    ,                                         [1]     ,           [2]        ] 
+    params = [ [10],                          [1]    ,                                                     [8]     ,           [100]        ] 
     params = list(itertools.product(*params))
     #params = params[0:2]
     precision = []
@@ -118,7 +118,7 @@ def main(spark, sc):
 
         ##############################################################
         users = val.select(als.getUserCol()).distinct()
-        userSubsetRecs = model.recommendForUserSubset(users, 3)
+        userSubsetRecs = model.recommendForUserSubset(users, 500)
         userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
         print('-----------------------------------------------------')
         print('user subset Recs')
