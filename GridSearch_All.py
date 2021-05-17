@@ -96,10 +96,11 @@ def main(spark, sc):
     
     # -------------------- Running full model. - This ran successfully -------------------------
     # ------------------------------ 10 Recs for each user -------------------------------------
-    params = [ [.001,.01,1,10,100],                             #alpha
-            [.01,.1,1,10,50]    ,                           #regParam                            
-            [3]     ,                                       #maxIter 
-            [50,100]        ]                               #rank
+    # params = [ [.001,.01,1,10,100],                             #alpha
+    #         [.01,.1,1,10,50]    ,                           #regParam                            
+    #         [3]     ,                                       #maxIter 
+    #         [50,100]        ]                               #rank
+    params = [ [10],[1], [8]     ,[100]        ]
     params = list(itertools.product(*params))
     
     precision = []
@@ -109,8 +110,8 @@ def main(spark, sc):
     # print('val')
     # print(val1.show())
     # print('-----------------------------------------------------')
-
-    for i in params:
+    
+    for i,z in zip(params,range(1)):
         
         als = ALS(rank = i[3], maxIter=i[2],regParam=i[1],userCol="userId", itemCol="trackId", ratingCol="count",
                     alpha = i[0], implicitPrefs = True)
@@ -141,10 +142,9 @@ def main(spark, sc):
         # print('Join RDD')
         # print(k.take(10))
         # print('-----------------------------------------------------')
- 
+        k  = sc.parallelize(k)
         metrics = RankingMetrics(k)
-        p = sc.parallelize(metrics.meanAveragePrecision)
-        precision.append(p)
+        precision.append(metrics.meanAveragePrecision)
 
 
         
