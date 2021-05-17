@@ -47,7 +47,7 @@ def main(spark, sc):
 
     val1 = val.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
     print('-----------------------------------------------------')
-    print('user subset Recs')
+    print('val')
     print(val1.show())
     print('-----------------------------------------------------')
 
@@ -65,13 +65,13 @@ def main(spark, sc):
         userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
         print('-----------------------------------------------------')
         print('user subset Recs')
-        print(userSubsetRecs.show())
+        print(userSubsetRecs.show(truncate=False))
         print('-----------------------------------------------------')
 
         k = userSubsetRecs.join(val1,"userId")
         print('-----------------------------------------------------')
         print('Join')
-        print(k.show())
+        print(k.show(truncate=False))
         print('-----------------------------------------------------')
 
 
