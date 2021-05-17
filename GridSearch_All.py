@@ -46,6 +46,10 @@ def main(spark, sc):
     precision = []
 
     val1 = val.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
+    print('-----------------------------------------------------')
+    print('user subset Recs')
+    print(val1.show())
+    print('-----------------------------------------------------')
 
     for i in params:
         
@@ -57,13 +61,26 @@ def main(spark, sc):
 
         ##############################################################
         users = val.select(als.getUserCol()).distinct()
-        userSubsetRecs = model.recommendForUserSubset(users, 5)
+        userSubsetRecs = model.recommendForUserSubset(users, 3)
         userSubsetRecs = userSubsetRecs.select("userId","recommendations.trackId")
-        
-    
+        print('-----------------------------------------------------')
+        print('user subset Recs')
+        print(userSubsetRecs.show())
+        print('-----------------------------------------------------')
+
         k = userSubsetRecs.join(val1,"userId")
+        print('-----------------------------------------------------')
+        print('Join')
+        print(k.show())
+        print('-----------------------------------------------------')
+
+
         k = k.select('trackId_preds',"trackId").rdd
+        print('-----------------------------------------------------')
+        print('Join RDD')
         print(k.take(10))
+        print('-----------------------------------------------------')
+ 
         metrics = RankingMetrics(k)
         
         precision.append(metrics.meanAveragePrecision)
