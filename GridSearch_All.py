@@ -96,10 +96,12 @@ def main(spark, sc):
     
     # -------------------- Running full model. - This ran successfully -------------------------
     # ------------------------------ 10 Recs for each user -------------------------------------
-    #            alpha                      regParam                                                    maxIter                   rank
-    params = [ [10],                          [1]    ,                                                     [8]     ,           [100]        ] 
+    params = [ [.001,.01,1,10,100],                             #alpha
+            [.01,.1,1,10,50]    ,                           #regParam                            
+            [8]     ,                                       #maxIter 
+            [50,100]        ]                               #rank
     params = list(itertools.product(*params))
-    #params = params[0:2]
+    
     precision = []
 
     val1 = val.groupBy("userId").agg(F.collect_list("trackId").alias("trackId_preds"))
@@ -142,7 +144,7 @@ def main(spark, sc):
  
         metrics = RankingMetrics(k)
         
-        precision.append(metrics.meanAveragePrecision)
+        precision.append(sc.parallelize(metrics.meanAveragePrecision))
 
 
         
