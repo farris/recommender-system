@@ -1,3 +1,25 @@
+# GITHUB ORGANIZATION 
+
+
+The following files were run sequentially to obtain the final results from the ALS Model (ie. 500 recommendations per user)
+
+## —— branch MAIN: ALS MODEL———————————————
+
+1) Build_Hash.py : .py file that creates a uniform integer hash key for the train, test, and validation sets. This key is then saved locally on HDFS
+
+2) Parquet_Build.py: .py file that loads in the uniform hash key from HDFS, applies it to each of the datasets, and then writes the new files back out to our local HDFS
+
+3) GridSearchFinal: Folder that contains the results of our grid search and the corresponding Jupiter notebook
+
+4) FinalModel.py: .py file that contains our final model run, with the optimal hyper parameters (running to a high level of iterations)
+
+## ——branch MAIN: EXTENSION———————————————
+
+5) Subsample.py: .py file that subsamples from train & test user/track/count data (5%)
+
+6) Lenskit_Extension.ipynb: Extension results
+
+
 # DSGA1004 - BIG DATA
 ## Final project
 - Prof Brian McFee (bm106)
