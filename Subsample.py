@@ -9,9 +9,9 @@ def main(spark, sc):
     train_samples = .005
 
     print('Reading Files...')
-    cf_train = spark.read.parquet('hdfs:/user/zm2114/cf_train.parquet')
-    cf_validation = spark.read.parquet('hdfs:/user/zm2114/cf_validation.parquet')
-    cf_test = spark.read.parquet('hdfs:/user/zm2114/cf_test.parquet')
+    cf_train = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train.parquet')
+    cf_validation = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_validation.parquet')
+    cf_test = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_test.parquet')
 
     ## Comment out these lines once subsample has been created ##
     # taking x% of training samples
