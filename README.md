@@ -17,7 +17,7 @@ The following files were run sequentially to obtain the final results from the A
 
 ## ——branch MAIN: EXTENSION———————————————
 
-6) Subsample.py: .py file that subsamples from train & test user/track/count data (5%)
+6) Subsample.py: .py file that subsamples from train & test user/track/count data (.5%)
 
 7) Lenskit_Extension.ipynb: Extension results
 
