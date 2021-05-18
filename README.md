@@ -3,7 +3,7 @@
 
 The following files were run sequentially to obtain the final results from the ALS Model (ie. 500 recommendations per user)
 
-## —— branch MAIN: ALS MODEL ——
+## —— branch MAIN: ALS MODEL———————————————
 
 1) Build_Hash.py : .py file that creates a uniform integer hash key for the train, test, and validation sets. This key is then saved locally on HDFS
 
