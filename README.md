@@ -1,4 +1,9 @@
 ### Authors: Farris Atif & Zafir Momin
+# About
+
+This repository contains an implementation of Spark's built in implicit ALS matrix factorization , allowing us to create a reccomender system using 
+the Million Song Dataset https://www.kaggle.com/c/msdchallenge. The 200 gb+ dataset is housed on NYU's High Speed Cluster (HPC) : Peele , where all computation was performed.
+
 
 # GITHUB ORGANIZATION 
 
